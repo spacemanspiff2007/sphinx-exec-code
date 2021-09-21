@@ -12,7 +12,9 @@ Sphinx-exec-code allows execution of any python code during the documentation bu
 It's also possible to display the output of the code execution.
 
 With this extension it's easy to ensure that the provided code samples are always working.
-Additionally, it's possible to inspect and print output of the documented code.
+Additionally, it's possible to show the output of the documented code.
+
+Each code snippet runs in a fresh interpreter so changes to not leak between executions.
 
 ## Documentation
 [The full documentation can be found at here](https://sphinx-exec-code.readthedocs.io)
@@ -22,12 +24,20 @@ Additionally, it's possible to inspect and print output of the documented code.
 
 ````text
 .. exec-code::
-   :hide_output:
 
    print('This code will be executed')
 ````
-
+generates
+```python
+print('This code will be executed')
+```
+```
+This code will be executed
+```
 
 # Changelog
+#### 0.3 (24.09.2021)
+- Added some more documentation and fixed some false path warnings
+
 #### 0.2 (21.09.2021)
 - Initial Release

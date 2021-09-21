@@ -4,17 +4,21 @@ Usage
 
 Without options
 ------------------------------
-.. code-block:: rst
+.. code-block:: python
 
    .. exec_code::
 
       print('Easy!')
 
-Generated view:
+Generated view
+
+----
 
 .. exec_code::
 
     print('Easy!')
+
+----
 
 Options
 ------------------------------
@@ -34,7 +38,7 @@ language/language_output:
 
 Example:
 
-.. code-block:: rst
+.. code-block:: python
 
    .. exec_code::
       :linenos:
@@ -43,7 +47,9 @@ Example:
 
       print('Easy!')
 
-Generated view:
+Generated view
+
+----
 
 .. exec_code::
   :linenos:
@@ -52,12 +58,15 @@ Generated view:
 
   print('Easy!')
 
+----
 
-Hide code parts
+
+Code Markers
 ------------------------------
 It's possible to hide parts of the code (e.g. to setup a working example)
 and it's possible to skip part of the code execution. This is possible with the
 ``#hide:[start|stop|toggle]`` or ``#skip:[start|stop|toggle]`` marker in the code.
+Empty lines after a disabling marker will be ignored.
 
 Spaces and dashes are ignored for the case insensitive marker detection so these are all the same:
 
@@ -69,33 +78,75 @@ Spaces and dashes are ignored for the case insensitive marker detection so these
         # ----- hide: start -----
 
 
-Example:
-
-.. code-block:: rst
+Hiding code parts
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. code-block:: python
 
    .. exec_code::
 
       # --- hide: start ---
       print('Setup!')
       #hide:toggle
+
       print('Easy!')
+
       # --- hide: start ---
       print('Hidden!')
       # --- hide: stop ---
+
       # Note the missing entries!
       print('Visible!')
 
 
-Generated view:
+Generated view (note the skipped empty lines after the stop and disabling toggle marker)
+
+----
 
 .. exec_code::
 
    # --- hide: start ---
    print('Setup!')
    #hide:toggle
+
    print('Easy!')
+
    # --- hide: start ---
    print('Hidden!')
    # --- hide: stop ---
+
    # Note the missing entries!
    print('Visible!')
+
+----
+
+Skipping code parts
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. code-block:: python
+
+   .. exec_code::
+
+      # --- skip: start ---
+      print(f'1 / 0 = {1 / 0}')
+      # --- skip: stop ---
+
+      # --- hide: start ---
+      print('1 / 0 = 0')
+      # --- hide: stop ---
+
+Generated view
+
+----
+
+ .. exec_code::
+
+    # --- skip: start ---
+    print(f'1 / 0 = {1 / 0}')
+    # --- skip: stop ---
+
+    # --- hide: start ---
+    print('1 / 0 = 0')
+    # --- hide: stop ---
+
+----
+
+With the combination of ``skip`` and ``hide`` it's possible to "simulate" every code.

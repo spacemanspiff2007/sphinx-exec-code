@@ -32,8 +32,9 @@ def builder_ready(app):
             raise FileNotFoundError(f'Additional directory "{_f}" not found! (configured by {CONF_NAME_DIRS})')
 
     # Search for a python package and print a warning if we find none
-    # since this is the only reason to specify a working dir
+    # since this is the only reason to specify additional folders
     for _f in folders:
+        package_found = False
         for __f in _f.iterdir():
             if not __f.is_dir():
                 continue
@@ -41,9 +42,13 @@ def builder_ready(app):
             # log warning if we don't find a python package
             for file in __f.iterdir():
                 if file.name == '__init__.py':
+                    package_found = True
                     break
-            else:
-                log.warning(f'[exec-code] No Python package found in {_f}')
+            if package_found:
+                break
+
+        if not package_found:
+            log.warning(f'[exec-code] No Python packages found in {_f}')
 
     setup_code_env(cwd, folders)
     return None

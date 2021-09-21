@@ -57,14 +57,17 @@ class ExecCode(SphinxDirective):
         :return:
         """
         output = []
+        file, line = self.get_source_info()
 
         # format the code
-        code_show, code_exec = get_show_exec_code(self.content)
+        try:
+            code_show, code_exec = get_show_exec_code(self.content)
+        except Exception as e:
+            raise ExtensionError(f'Could not parse code markers at {self.get_location()}', orig_exc=e)
 
         # Show the code from the user
         create_literal_block(output, code_show, spec=SpecCode.from_options(self.options))
 
-        file, line = self.get_source_info()
         try:
             code_results = execute_code(code_exec, file, line)
         except CodeException as e:
