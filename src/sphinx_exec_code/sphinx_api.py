@@ -81,4 +81,11 @@ def setup(app):
     app.add_directive('exec_code', ExecCode)
 
     log.debug(f'[exec-code] Version: {__version__}')
-    return {'version': __version__}
+
+    return {
+        'version': __version__,
+
+        # https://github.com/spacemanspiff2007/sphinx-exec-code/issues/2
+        # This extension does not store any states so it should be safe for parallel reading
+        'parallel_read_safe': True
+    }

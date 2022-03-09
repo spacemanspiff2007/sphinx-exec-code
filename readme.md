@@ -36,6 +36,9 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.5 (10.03.2022)
+- Marked as safe for parallel reading
+
 #### 0.4 (09.03.2022)
 - Added option to run code from example files
 
