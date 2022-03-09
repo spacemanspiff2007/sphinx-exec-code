@@ -60,6 +60,27 @@ Generated view
 
 ----
 
+Code from files
+------------------------------
+It's possible to have code in example files with the ``filename`` option.
+The folder that is used to resolve to a file name can be :ref:`configured <config_options>`.
+
+Example:
+
+.. code-block:: python
+
+   .. exec_code::
+      :filename: file_example.py
+
+
+Generated view
+
+----
+
+.. exec_code::
+   :filename: file_example.py
+
+----
 
 Code Markers
 ------------------------------

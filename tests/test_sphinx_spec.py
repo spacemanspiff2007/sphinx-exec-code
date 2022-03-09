@@ -7,9 +7,7 @@ from docutils.parsers.rst import directives
 from sphinx_exec_code.sphinx_spec import build_spec, SpecCode, SpecOutput, SphinxSpecBase
 
 
-def test_aliases():
-    assert list(SpecCode.aliases.values()) == list(SpecOutput.aliases.values())
-
+def test_aliases_unique():
     for key_code in SpecCode.aliases:
         assert key_code not in SpecOutput.aliases
     for key_output in SpecOutput.aliases:
@@ -23,7 +21,7 @@ def test_default_in_aliases(cls: Type[SphinxSpecBase]):
         assert k in names
 
 
-def test_build_spec():
+def test_build_spec_code():
     spec = build_spec()
 
     for name in chain(SpecCode.aliases.keys(), SpecOutput.aliases.keys()):
@@ -34,6 +32,7 @@ def test_build_spec():
         'linenos': directives.flag,
         'caption': directives.unchanged,
         'language': directives.unchanged,
+        'filename': directives.unchanged,
 
         'hide_output': directives.flag,
         'linenos_output': directives.flag,
@@ -48,6 +47,7 @@ def test_spec_code():
     assert obj.language == 'python'
     assert obj.linenos is True
     assert obj.hide is False
+    assert obj.filename == ''
 
 
 def test_spec_output():

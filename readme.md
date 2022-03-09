@@ -36,6 +36,9 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.4 (09.03.2022)
+- Added option to run code from example files
+
 #### 0.3 (24.09.2021)
 - Added some more documentation and fixed some false path warnings
 

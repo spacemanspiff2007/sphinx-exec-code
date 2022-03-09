@@ -50,11 +50,17 @@ class SpecCode(SphinxSpecBase):
         'caption': 'caption',
         'language': 'language',
         'linenos': 'linenos',
+        'filename': 'filename',
     }
     defaults = {
         'caption': '',
         'language': 'python',
+        'filename': '',
     }
+
+    def __init__(self, hide: bool, linenos: bool, caption: str, language: str, filename: str):
+        super().__init__(hide, linenos, caption, language)
+        self.filename: str = filename
 
 
 class SpecOutput(SphinxSpecBase):

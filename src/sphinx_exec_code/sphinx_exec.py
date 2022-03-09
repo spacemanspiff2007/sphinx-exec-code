@@ -1,4 +1,6 @@
 import traceback
+from pathlib import Path
+from typing import Optional
 
 from docutils import nodes
 from sphinx.errors import ExtensionError
@@ -8,6 +10,13 @@ from sphinx_exec_code.__const__ import log
 from sphinx_exec_code.code_exec import CodeException, execute_code
 from sphinx_exec_code.code_format import get_show_exec_code, VisibilityMarkerError
 from sphinx_exec_code.sphinx_spec import build_spec, SpecCode, SpecOutput, SphinxSpecBase
+
+EXAMPLE_DIR: Optional[Path] = None
+
+
+def setup_example_dir(example_dir: Path):
+    global EXAMPLE_DIR
+    EXAMPLE_DIR = example_dir
 
 
 def create_literal_block(objs: list, code: str, spec: SphinxSpecBase):
@@ -58,15 +67,23 @@ class ExecCode(SphinxDirective):
         """
         output = []
         file, line = self.get_source_info()
+        content = self.content
+
+        code_spec = SpecCode.from_options(self.options)
+
+        # Read from example files
+        if code_spec.filename:
+            filename = (EXAMPLE_DIR / code_spec.filename).resolve()
+            content = filename.read_text(encoding='utf-8').splitlines()
 
         # format the code
         try:
-            code_show, code_exec = get_show_exec_code(self.content)
+            code_show, code_exec = get_show_exec_code(content)
         except Exception as e:
             raise ExtensionError(f'Could not parse code markers at {self.get_location()}', orig_exc=e)
 
         # Show the code from the user
-        create_literal_block(output, code_show, spec=SpecCode.from_options(self.options))
+        create_literal_block(output, code_show, spec=code_spec)
 
         try:
             code_results = execute_code(code_exec, file, line)
