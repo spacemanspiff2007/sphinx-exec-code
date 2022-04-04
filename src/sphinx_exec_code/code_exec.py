@@ -18,7 +18,7 @@ def setup_code_env(cwd: Path, folders: Iterable[Path]):
     ADDITIONAL_FOLDERS = tuple(map(str, folders))
 
 
-def execute_code(code: str, file: str, line: int) -> str:
+def execute_code(code: str, file: Path, first_loc: int) -> str:
     if WORKING_DIR is None or ADDITIONAL_FOLDERS is None:
         raise ConfigError('Working dir or additional folders are not set!')
 
@@ -30,7 +30,7 @@ def execute_code(code: str, file: str, line: int) -> str:
 
     run = subprocess.run([sys.executable, '-c', code], capture_output=True, cwd=WORKING_DIR, env=env)
     if run.returncode != 0:
-        raise CodeException(code, (file, line), run.returncode, run.stderr.decode()) from None
+        raise CodeException(code, file, first_loc, run.returncode, run.stderr.decode()) from None
 
     ret = (run.stdout.decode() + run.stderr.decode()).strip()
 

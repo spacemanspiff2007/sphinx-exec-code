@@ -1,6 +1,6 @@
 import traceback
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from docutils import nodes
 from sphinx.errors import ExtensionError
@@ -61,13 +61,31 @@ class ExecCode(SphinxDirective):
                     log.error(line)
             raise ExtensionError(f'Error while running {name}!', orig_exc=e)
 
+    def _get_code_line(self, line_no: int, content: List[str]) -> int:
+        """Get the first line number of the code"""
+        if not content:
+            return line_no
+
+        i = 0
+        first_line = content[0]
+
+        for i, raw_line in enumerate(self.block_text.splitlines()):
+            # raw line contains the leading white spaces
+            if raw_line.lstrip() == first_line:
+                break
+
+        return line_no + i
+
     def _run(self) -> list:
         """ Executes python code for an RST document, taking input from content or from a filename
         :return:
         """
         output = []
-        file, line = self.get_source_info()
+        raw_file, raw_line = self.get_source_info()
         content = self.content
+
+        file = Path(raw_file)
+        line = self._get_code_line(raw_line, content)
 
         code_spec = SpecCode.from_options(self.options)
 
@@ -75,6 +93,7 @@ class ExecCode(SphinxDirective):
         if code_spec.filename:
             filename = (EXAMPLE_DIR / code_spec.filename).resolve()
             content = filename.read_text(encoding='utf-8').splitlines()
+            file, line = filename, 1
 
         # format the code
         try:

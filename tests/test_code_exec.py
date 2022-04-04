@@ -25,7 +25,7 @@ def test_err(setup_env):
     code = "print('Line1')\nprint('Line2')\n1/0"
 
     with pytest.raises(CodeException) as e:
-        execute_code(code, 'my_file', 5)
+        execute_code(code, Path('/my_file'), 5)
 
     msg = e.value.pformat()
     assert msg == [
@@ -34,6 +34,6 @@ def test_err(setup_env):
         '   1/0 <--',
         '',
         'Traceback (most recent call last):',
-        '  File "my_file", line 9',
+        '  File "my_file", line 7',
         'ZeroDivisionError: division by zero'
     ]

@@ -36,6 +36,9 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.6 (04.04.2022)
+- Fixed an issue where the line numbers for error messages were not correct
+
 #### 0.5 (10.03.2022)
 - Marked as safe for parallel reading
 
