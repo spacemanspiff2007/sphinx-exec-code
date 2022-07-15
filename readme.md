@@ -36,6 +36,10 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.7 (15.07.2022)
+- Added config parameter to specify stdout encoding
+- Only empty lines of the output get trimmed 
+
 #### 0.6 (04.04.2022)
 - Fixed an issue where the line numbers for error messages were not correct
 

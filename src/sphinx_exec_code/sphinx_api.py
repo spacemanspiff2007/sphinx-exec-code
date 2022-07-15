@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from sphinx_exec_code import __version__
@@ -8,6 +9,7 @@ from sphinx_exec_code.sphinx_exec import ExecCode, setup_example_dir
 CONF_NAME_CWD = 'exec_code_working_dir'
 CONF_NAME_DIRS = 'exec_code_folders'
 CONF_NAME_SAMPLE_DIR = 'exec_code_example_dir'
+CONF_NAME_STDOUT_ENCODING = 'exec_code_stdout_encoding'
 
 
 def mk_path(app, obj) -> Path:
@@ -22,10 +24,12 @@ def builder_ready(app):
     cwd = mk_path(app, getattr(app.config, CONF_NAME_CWD))
     folders = tuple(mk_path(app, _p) for _p in getattr(app.config, CONF_NAME_DIRS))
     example_dir = mk_path(app, getattr(app.config, CONF_NAME_SAMPLE_DIR))
+    stdout_encoding = getattr(app.config, CONF_NAME_STDOUT_ENCODING)
 
     log.debug(f'[exec-code] Working dir: {cwd}')
     log.debug(f'[exec-code] Folders: {", ".join(map(str, folders))}')
     log.debug(f'[exec-code] Example dir: {example_dir}')
+    log.debug(f'[exec-code] Stdout encoding: {stdout_encoding}')
 
     # Ensure dirs are valid
     if not cwd.is_dir():
@@ -56,7 +60,7 @@ def builder_ready(app):
             log.warning(f'[exec-code] No Python packages found in {_f}')
 
     setup_example_dir(example_dir)
-    setup_code_env(cwd, folders)
+    setup_code_env(cwd, folders, stdout_encoding)
     return None
 
 
@@ -73,9 +77,10 @@ def setup(app):
         code_folders.append(str(src_dir))
 
     # config options
-    app.add_config_value(CONF_NAME_CWD, cwd, 'env',)
-    app.add_config_value(CONF_NAME_DIRS, code_folders, 'env')
-    app.add_config_value(CONF_NAME_SAMPLE_DIR, confdir, 'env')
+    app.add_config_value(CONF_NAME_CWD, cwd, 'env', (Path, str))
+    app.add_config_value(CONF_NAME_DIRS, code_folders, 'env', (Path, str))
+    app.add_config_value(CONF_NAME_SAMPLE_DIR, confdir, 'env', (Path, str))
+    app.add_config_value(CONF_NAME_STDOUT_ENCODING, sys.stdout.encoding, 'env', str)
 
     app.connect('builder-inited', builder_ready)
     app.add_directive('exec_code', ExecCode)

@@ -21,6 +21,14 @@ def test_print(setup_env):
     assert output == 'Line1\nLine2'
 
 
+def test_print_table(setup_env):
+    code = "\n \n  \n\n" \
+           "print('      | A | B |')\n" \
+           "print(' Col1 | 1 | 2 |')"
+    output = execute_code(code, 'my_file', 1)
+    assert output == '      | A | B |\n Col1 | 1 | 2 |'
+
+
 def test_err(setup_env):
     code = "print('Line1')\nprint('Line2')\n1/0"
 
@@ -37,3 +45,9 @@ def test_err(setup_env):
         '  File "my_file", line 7',
         'ZeroDivisionError: division by zero'
     ]
+
+
+def test_unicode(setup_env):
+    code = "print('●')"
+    output = execute_code(code, 'my_file', 1)
+    assert output == '●'

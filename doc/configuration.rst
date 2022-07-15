@@ -1,5 +1,15 @@
 Installation and Configuration
 ==================================
+
+Installation
+----------------------------------
+
+.. code-block::
+
+   pip install sphinx-exec-code
+
+
+
 To use this extension just add it to the ``extensions`` in your ``conf.py``
 
 .. code-block::
@@ -8,7 +18,10 @@ To use this extension just add it to the ``extensions`` in your ``conf.py``
        'sphinx_exec_code',
    ]
 
-Additionally the following configuration parameters are available:
+Configuration
+----------------------------------
+
+The following configuration parameters are available:
 
 .. _config_options:
 
@@ -35,11 +48,17 @@ Additionally the following configuration parameters are available:
      - | The directory that is used to create the path to the
        | example files. Defaults to the parent folder of the ``conf.py``.
 
+   * - ``exec_code_stdout_encoding``
+     - ``str``
+     - | Encoding used to decode stdout.
+       | The default depends on the operating system but should be ``utf-8``.
+
+
 If it's a relative path it will be resolved relative to the parent folder of the ``conf.py``
 
 Example:
 
-.. code-block::
+.. code-block:: python
 
    exec_code_working_dir = '..'
    exec_code_folders = ['../my_src']
@@ -50,8 +69,9 @@ The configured values are logged.
 
 Log output for Example:
 
-::
+.. code-block:: text
 
    [exec-code] Working dir: C:\Python\sphinx-exec-code
    [exec-code] Folders: C:\Python\sphinx-exec-code\my_src
    [exec-code] Example dir: C:\Python\sphinx-exec-code\doc
+   [exec-code] Stdout encoding: utf-8
