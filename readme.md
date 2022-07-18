@@ -36,9 +36,15 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.8 (18.07.2022)
+- Renamed ``exec_code_folders`` to ``exec_code_source_folders``
+- Changed type of parameter to specify stdout to a flag
+- Changed default for config parameter that sets encoding
+- Dropped support for Python 3.7
+
 #### 0.7 (15.07.2022)
 - Added config parameter to specify stdout encoding
-- Only empty lines of the output get trimmed 
+- Only empty lines of the output get trimmed
 
 #### 0.6 (04.04.2022)
 - Fixed an issue where the line numbers for error messages were not correct

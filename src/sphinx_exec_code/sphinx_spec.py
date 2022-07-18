@@ -5,7 +5,7 @@ from docutils.parsers.rst import directives  # type: ignore
 
 class SphinxSpecBase:
     aliases: Dict[str, str]
-    defaults = Dict[str, str]
+    defaults: Dict[str, str]
 
     def __init__(self, hide: bool, linenos: bool, caption: str, language: str):
         # flags

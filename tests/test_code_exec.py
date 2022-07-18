@@ -1,27 +1,34 @@
+import os
 from pathlib import Path
 
 import pytest
 
-import sphinx_exec_code.code_exec
 from sphinx_exec_code.code_exec import CodeException, execute_code
+from sphinx_exec_code.configuration import PYTHONPATH_FOLDERS, SET_UTF8_ENCODING, WORKING_DIR
 
 
 @pytest.fixture
 def setup_env(monkeypatch):
     f = Path(__file__).parent
-    monkeypatch.setattr(sphinx_exec_code.code_exec, 'WORKING_DIR', str(f))
-    monkeypatch.setattr(sphinx_exec_code.code_exec, 'ADDITIONAL_FOLDERS', [str(f)])
+    monkeypatch.setattr(WORKING_DIR, '_value', f)
+    monkeypatch.setattr(PYTHONPATH_FOLDERS, '_value', [str(f)])
 
     yield
 
 
-def test_print(setup_env):
+@pytest.mark.parametrize('utf8', [True, False])
+def test_print(setup_env, monkeypatch, utf8):
+    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
+
     code = "print('Line1')\nprint('Line2')"
     output = execute_code(code, 'my_file', 1)
     assert output == 'Line1\nLine2'
 
 
-def test_print_table(setup_env):
+@pytest.mark.parametrize('utf8', [True, False])
+def test_print_table(setup_env, monkeypatch, utf8):
+    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
+
     code = "\n \n  \n\n" \
            "print('      | A | B |')\n" \
            "print(' Col1 | 1 | 2 |')"
@@ -29,7 +36,10 @@ def test_print_table(setup_env):
     assert output == '      | A | B |\n Col1 | 1 | 2 |'
 
 
-def test_err(setup_env):
+@pytest.mark.parametrize('utf8', [True, False])
+def test_err(setup_env, monkeypatch, utf8):
+    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
+
     code = "print('Line1')\nprint('Line2')\n1/0"
 
     with pytest.raises(CodeException) as e:
@@ -47,7 +57,26 @@ def test_err(setup_env):
     ]
 
 
-def test_unicode(setup_env):
+IS_WIN = os.name == 'nt'
+
+
+@pytest.mark.skipif(not IS_WIN, reason='Windows only')
+def test_unicode_fails(setup_env, monkeypatch):
     code = "print('●')"
-    output = execute_code(code, 'my_file', 1)
-    assert output == '●'
+
+    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', False)
+    assert execute_code(code, 'my_file', 1) != '●'
+
+    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', True)
+    assert execute_code(code, 'my_file', 1) == '●'
+
+
+@pytest.mark.skipif(IS_WIN, reason='Fails on Windows')
+def test_unicode_no_utf8(setup_env, monkeypatch):
+    code = "print('●')"
+
+    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', False)
+    assert execute_code(code, 'my_file', 1) == '●'
+
+    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', True)
+    assert execute_code(code, 'my_file', 1) == '●'

@@ -37,7 +37,7 @@ extensions = [
 ]
 
 exec_code_working_dir = '../src'
-exec_code_folders = ['../src']
+exec_code_source_folders = ['../src', '../src', ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

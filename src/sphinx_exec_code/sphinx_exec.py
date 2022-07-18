@@ -1,6 +1,6 @@
 import traceback
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from docutils import nodes
 from sphinx.errors import ExtensionError
@@ -9,14 +9,8 @@ from sphinx.util.docutils import SphinxDirective
 from sphinx_exec_code.__const__ import log
 from sphinx_exec_code.code_exec import CodeException, execute_code
 from sphinx_exec_code.code_format import get_show_exec_code, VisibilityMarkerError
+from sphinx_exec_code.configuration import EXAMPLE_DIR
 from sphinx_exec_code.sphinx_spec import build_spec, SpecCode, SpecOutput, SphinxSpecBase
-
-EXAMPLE_DIR: Optional[Path] = None
-
-
-def setup_example_dir(example_dir: Path):
-    global EXAMPLE_DIR
-    EXAMPLE_DIR = example_dir
 
 
 def create_literal_block(objs: list, code: str, spec: SphinxSpecBase):
@@ -91,7 +85,7 @@ class ExecCode(SphinxDirective):
 
         # Read from example files
         if code_spec.filename:
-            filename = (EXAMPLE_DIR / code_spec.filename).resolve()
+            filename = (EXAMPLE_DIR.value / code_spec.filename).resolve()
             content = filename.read_text(encoding='utf-8').splitlines()
             file, line = filename, 1
 

@@ -1,4 +1,4 @@
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, List
 
 
 class VisibilityMarkerError(Exception):
@@ -16,7 +16,7 @@ class CodeMarker:
 
         self.do_add = True
         self.skip_empty = False
-        self.lines = []
+        self.lines: List[str] = []
 
     def is_marker(self, line: str) -> bool:
         if line == self.start:

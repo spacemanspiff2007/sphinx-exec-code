@@ -37,7 +37,7 @@ The following configuration parameters are available:
      - ``Path`` or ``str``
      - The working directory where the code will be executed.
 
-   * - ``exec_code_folders``
+   * - ``exec_code_source_folders``
      - | ``List`` of
        | ``Path`` or ``str``
      - | Additional folders that will be added to PYTHONPATH.
@@ -48,10 +48,10 @@ The following configuration parameters are available:
      - | The directory that is used to create the path to the
        | example files. Defaults to the parent folder of the ``conf.py``.
 
-   * - ``exec_code_stdout_encoding``
-     - ``str``
-     - | Encoding used to decode stdout.
-       | The default depends on the operating system but should be ``utf-8``.
+   * - ``exec_code_set_utf8_encoding``
+     - ``True`` or ``False``
+     - | True enforces utf-8 encoding (can fix encoding errors).
+       | Default is ``False`` except on Windows where it is ``True``.
 
 
 If it's a relative path it will be resolved relative to the parent folder of the ``conf.py``
@@ -61,7 +61,7 @@ Example:
 .. code-block:: python
 
    exec_code_working_dir = '..'
-   exec_code_folders = ['../my_src']
+   exec_code_source_folders = ['../my_src']
    exec_code_example_dir = '.'
 
 If you are unsure what the values are you can run Sphinx build in verbose mode with ``-v -v``.
@@ -72,6 +72,6 @@ Log output for Example:
 .. code-block:: text
 
    [exec-code] Working dir: C:\Python\sphinx-exec-code
-   [exec-code] Folders: C:\Python\sphinx-exec-code\my_src
+   [exec-code] Source folders: C:\Python\sphinx-exec-code\my_src
    [exec-code] Example dir: C:\Python\sphinx-exec-code\doc
-   [exec-code] Stdout encoding: utf-8
+   [exec-code] Set utf8 encoding: True
