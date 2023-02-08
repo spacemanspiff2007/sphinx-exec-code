@@ -3,17 +3,16 @@ from pathlib import Path
 
 import pytest
 
-from sphinx_exec_code.code_exec import CodeException, execute_code
+from sphinx_exec_code.code_exec import CodeExceptionError, execute_code
 from sphinx_exec_code.configuration import PYTHONPATH_FOLDERS, SET_UTF8_ENCODING, WORKING_DIR
 
 
-@pytest.fixture
+@pytest.fixture()
 def setup_env(monkeypatch):
     f = Path(__file__).parent
     monkeypatch.setattr(WORKING_DIR, '_value', f)
     monkeypatch.setattr(PYTHONPATH_FOLDERS, '_value', [str(f)])
-
-    yield
+    return None
 
 
 @pytest.mark.parametrize('utf8', [True, False])
@@ -42,7 +41,7 @@ def test_err(setup_env, monkeypatch, utf8):
 
     code = "print('Line1')\nprint('Line2')\n1/0"
 
-    with pytest.raises(CodeException) as e:
+    with pytest.raises(CodeExceptionError) as e:
         execute_code(code, Path('/my_file'), 5)
 
     msg = e.value.pformat()

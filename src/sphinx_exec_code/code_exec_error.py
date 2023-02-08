@@ -5,7 +5,7 @@ from typing import List
 re_line = re.compile(r'^\s*File "(<string>)", line (\d+), in <module>', re.MULTILINE)
 
 
-class CodeException(Exception):
+class CodeExceptionError(Exception):
     def __init__(self, code: str, file: Path, first_loc: int, ret: int, stderr: str):
         self.code = code
 

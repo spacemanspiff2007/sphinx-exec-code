@@ -7,7 +7,7 @@ def test_format_hide():
     code = 'print("1")\n# - hide: start - \nprint("2")\n #hide:stop\n  \n  \nprint("3")'
     show, run = get_show_exec_code(code.splitlines())
     assert show == 'print("1")\nprint("3")'
-    assert run == 'print("1")\nprint("2")\n  \n  \nprint("3")'
+    assert run == 'print("1")\nprint("2")\n\n\nprint("3")'
 
 
 def test_format_skip():
@@ -18,6 +18,22 @@ def test_format_skip():
 
 
 def test_marker_err():
+    code = 'print("1")\n# - hide: start - \n# - hide: start - \nprint("2")\n #hide:stop\nprint("3")'
     with pytest.raises(VisibilityMarkerError):
-        code = 'print("1")\n# - hide: start - \n# - hide: start - \nprint("2")\n #hide:stop\nprint("3")'
-        _, _ = get_show_exec_code(code.splitlines())
+        get_show_exec_code(code.splitlines())
+
+
+def test_code_indent():
+    code = """
+
+    print('asdf')
+        print('1234')
+      # comment
+
+
+    """
+    show, run = get_show_exec_code(code.splitlines())
+
+    assert show == "print('asdf')\n" \
+                   "    print('1234')\n" \
+                   "  # comment"

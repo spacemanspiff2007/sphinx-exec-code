@@ -7,7 +7,7 @@ from sphinx.errors import ExtensionError
 from sphinx.util.docutils import SphinxDirective
 
 from sphinx_exec_code.__const__ import log
-from sphinx_exec_code.code_exec import CodeException, execute_code
+from sphinx_exec_code.code_exec import CodeExceptionError, execute_code
 from sphinx_exec_code.code_format import get_show_exec_code, VisibilityMarkerError
 from sphinx_exec_code.configuration import EXAMPLE_DIR
 from sphinx_exec_code.sphinx_spec import build_spec, SpecCode, SpecOutput, SphinxSpecBase
@@ -63,7 +63,7 @@ class ExecCode(SphinxDirective):
         i = 0
         first_line = content[0]
 
-        for i, raw_line in enumerate(self.block_text.splitlines()):
+        for i, raw_line in enumerate(self.block_text.splitlines()):  # noqa: B007
             # raw line contains the leading white spaces
             if raw_line.lstrip() == first_line:
                 break
@@ -100,7 +100,7 @@ class ExecCode(SphinxDirective):
 
         try:
             code_results = execute_code(code_exec, file, line)
-        except CodeException as e:
+        except CodeExceptionError as e:
             # Newline so we don't have the build message mixed up with logs
             print()
 

@@ -1,4 +1,4 @@
-from typing import Iterable, Tuple, List
+from typing import Iterable, List, Tuple
 
 
 class VisibilityMarkerError(Exception):
@@ -64,10 +64,24 @@ def get_show_exec_code(code_lines: Iterable[str]) -> Tuple[str, str]:
         if skip.is_marker(line):
             continue
 
-        hide.add_line(org_line)
-        skip.add_line(org_line)
+        add_line = org_line.rstrip()
+        hide.add_line(add_line)
+        skip.add_line(add_line)
 
-    shown_code = '\n'.join(hide.lines)
+    # remove leading and tailing empty lines of the shown code
+    shown_lines = hide.lines
+    while shown_lines and not shown_lines[0].strip():
+        shown_lines.pop(0)
+    while shown_lines and not shown_lines[-1].strip():
+        shown_lines.pop(-1)
+
+    # check if the shown code block is indented as a whole -> strip
+    leading_spaces = [len(line) - len(line.lstrip()) for line in shown_lines]
+    if strip_spaces := min(leading_spaces):
+        for i, line in enumerate(shown_lines):
+            shown_lines[i] = line[strip_spaces:]
+
+    shown_code = '\n'.join(shown_lines)
     executed_code = '\n'.join(skip.lines)
 
-    return shown_code.strip(), executed_code.strip()
+    return shown_code, executed_code.strip()
