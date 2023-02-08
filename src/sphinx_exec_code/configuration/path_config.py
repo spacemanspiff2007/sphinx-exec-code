@@ -7,6 +7,10 @@ from sphinx_exec_code.__const__ import log
 from sphinx_exec_code.configuration.base import SphinxConfigValue, TYPE_VALUE
 
 
+class InvalidPathError(Exception):
+    pass
+
+
 class SphinxConfigPath(SphinxConfigValue[TYPE_VALUE]):
     SPHINX_TYPE = (str, Path)
 
@@ -14,8 +18,8 @@ class SphinxConfigPath(SphinxConfigValue[TYPE_VALUE]):
         try:
             path = Path(value)
         except Exception:
-            raise ValueError(f'Could not create Path from "{value}" (type {type(value).__name__}) '
-                             f'(configured by {self.sphinx_name:s})') from None
+            raise InvalidPathError(f'Could not create Path from "{value}" (type {type(value).__name__}) '
+                                   f'(configured by {self.sphinx_name:s})') from None
 
         if not path.is_absolute():
             path = (Path(app.confdir) / path).resolve()

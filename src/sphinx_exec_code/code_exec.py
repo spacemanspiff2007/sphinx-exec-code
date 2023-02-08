@@ -4,7 +4,7 @@ import sys
 from itertools import dropwhile
 from pathlib import Path
 
-from sphinx_exec_code.code_exec_error import CodeException
+from sphinx_exec_code.code_exec_error import CodeExceptionError
 from sphinx_exec_code.configuration import PYTHONPATH_FOLDERS, SET_UTF8_ENCODING, WORKING_DIR
 
 
@@ -25,7 +25,7 @@ def execute_code(code: str, file: Path, first_loc: int) -> str:
                          encoding=encoding, cwd=cwd, env=env)
 
     if run.returncode != 0:
-        raise CodeException(code, file, first_loc, run.returncode, run.stderr) from None
+        raise CodeExceptionError(code, file, first_loc, run.returncode, run.stderr) from None
 
     # decode output and drop tailing spaces
     ret_str = (run.stdout if run.stdout is not None else '' + run.stderr if run.stderr is not None else '').rstrip()

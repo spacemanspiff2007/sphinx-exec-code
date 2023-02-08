@@ -13,6 +13,9 @@ ignore =
     # E303 too many blank lines
     E303,
 
+    # PT007 wrong values type in @pytest.mark.parametrize, expected list
+    PT007,
+
 max-line-length = 120
 
 exclude =

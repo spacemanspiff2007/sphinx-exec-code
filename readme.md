@@ -36,27 +36,30 @@ This code will be executed
 ```
 
 # Changelog
-#### 0.8 (18.07.2022)
+#### 0.9 (2023-02-08)
+- If the whole shown code block is indented the indention is removed
+
+#### 0.8 (2022-07-18)
 - Renamed ``exec_code_folders`` to ``exec_code_source_folders``
 - Changed type of parameter to specify stdout to a flag
 - Changed default for config parameter that sets encoding
 - Dropped support for Python 3.7
 
-#### 0.7 (15.07.2022)
+#### 0.7 (2022-07-15)
 - Added config parameter to specify stdout encoding
 - Only empty lines of the output get trimmed
 
-#### 0.6 (04.04.2022)
+#### 0.6 (2022-04-04)
 - Fixed an issue where the line numbers for error messages were not correct
 
-#### 0.5 (10.03.2022)
+#### 0.5 (2022-03-10)
 - Marked as safe for parallel reading
 
-#### 0.4 (09.03.2022)
+#### 0.4 (2022-03-09)
 - Added option to run code from example files
 
-#### 0.3 (24.09.2021)
+#### 0.3 (2021-09-24)
 - Added some more documentation and fixed some false path warnings
 
-#### 0.2 (21.09.2021)
+#### 0.2 (2021-09-21)
 - Initial Release
