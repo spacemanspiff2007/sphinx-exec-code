@@ -36,6 +36,9 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.10 (2023-02-13)
+- Fixed a bug when no code was shown/executed
+
 #### 0.9 (2023-02-08)
 - If the whole shown code block is indented the indention is removed
 
