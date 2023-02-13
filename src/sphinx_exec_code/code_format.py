@@ -51,7 +51,7 @@ class CodeMarker:
 
         self.lines.append(line)
 
-    def get_lines(self) -> list[str]:
+    def get_lines(self) -> List[str]:
         # remove leading and tailing empty lines of the code
         code_lines = self.lines
         while code_lines and not code_lines[0].strip():
