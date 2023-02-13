@@ -40,7 +40,9 @@ def test_code_indent():
 
 
 def test_code_split_empty():
-    _, _ = get_show_exec_code([''])
+    show, run = get_show_exec_code([''])
+    assert show == ''
+    assert run == ''
 
 
 def test_code_no_show():
