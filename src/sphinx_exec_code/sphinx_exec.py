@@ -8,9 +8,9 @@ from sphinx.util.docutils import SphinxDirective
 
 from sphinx_exec_code.__const__ import log
 from sphinx_exec_code.code_exec import CodeExceptionError, execute_code
-from sphinx_exec_code.code_format import get_show_exec_code, VisibilityMarkerError
+from sphinx_exec_code.code_format import VisibilityMarkerError, get_show_exec_code
 from sphinx_exec_code.configuration import EXAMPLE_DIR
-from sphinx_exec_code.sphinx_spec import build_spec, SpecCode, SpecOutput, SphinxSpecBase
+from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec
 
 
 def create_literal_block(objs: list, code: str, spec: SphinxSpecBase):
@@ -45,7 +45,7 @@ class ExecCode(SphinxDirective):
         try:
             return self._run()
         except ExtensionError as e:
-            raise e
+            raise e from None
         except Exception as e:
             name = self.__class__.__name__
             log.error(f'Error while running {name}!')
@@ -53,7 +53,9 @@ class ExecCode(SphinxDirective):
             if not isinstance(e, VisibilityMarkerError):
                 for line in traceback.format_exc().splitlines():
                     log.error(line)
-            raise ExtensionError(f'Error while running {name}!', orig_exc=e)
+
+            msg = f'Error while running {name}!'
+            raise ExtensionError(msg, orig_exc=e) from None
 
     def _get_code_line(self, line_no: int, content: List[str]) -> int:
         """Get the first line number of the code"""
@@ -63,7 +65,7 @@ class ExecCode(SphinxDirective):
         i = 0
         first_line = content[0]
 
-        for i, raw_line in enumerate(self.block_text.splitlines()):  # noqa: B007
+        for i, raw_line in enumerate(self.block_text.splitlines()):
             # raw line contains the leading white spaces
             if raw_line.lstrip() == first_line:
                 break
@@ -93,7 +95,8 @@ class ExecCode(SphinxDirective):
         try:
             code_show, code_exec = get_show_exec_code(content)
         except Exception as e:
-            raise ExtensionError(f'Could not parse code markers at {self.get_location()}', orig_exc=e)
+            msg = f'Could not parse code markers at {self.get_location()}'
+            raise ExtensionError(msg, orig_exc=e) from None
 
         # Show the code from the user
         create_literal_block(output, code_show, spec=code_spec)
@@ -108,7 +111,8 @@ class ExecCode(SphinxDirective):
             for line in e.pformat():
                 log.error(line)
 
-            raise ExtensionError('Could not execute code!') from None
+            msg = 'Could not execute code!'
+            raise ExtensionError(msg) from None
 
         # Show the output from the code execution
         create_literal_block(output, code_results, spec=SpecOutput.from_options(self.options))

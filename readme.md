@@ -36,6 +36,9 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.11 (2024-01-09)
+- Updated CI and ruff fixes
+
 #### 0.10 (2023-02-13)
 - Fixed a bug when no code was shown/executed
 

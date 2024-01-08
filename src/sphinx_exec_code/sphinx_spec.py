@@ -1,11 +1,11 @@
-from typing import Any, Callable, Dict
+from typing import Any, Callable, ClassVar, Dict
 
 from docutils.parsers.rst import directives  # type: ignore
 
 
 class SphinxSpecBase:
-    aliases: Dict[str, str]
-    defaults: Dict[str, str]
+    aliases: ClassVar[Dict[str, str]]
+    defaults: ClassVar[Dict[str, str]]
 
     def __init__(self, hide: bool, linenos: bool, caption: str, language: str):
         # flags
@@ -45,14 +45,14 @@ def build_spec() -> Dict[str, Callable[[Any], Any]]:
 
 
 class SpecCode(SphinxSpecBase):
-    aliases = {
+    aliases: ClassVar = {
         'hide_code': 'hide',
         'caption': 'caption',
         'language': 'language',
         'linenos': 'linenos',
         'filename': 'filename',
     }
-    defaults = {
+    defaults: ClassVar = {
         'caption': '',
         'language': 'python',
         'filename': '',
@@ -64,13 +64,13 @@ class SpecCode(SphinxSpecBase):
 
 
 class SpecOutput(SphinxSpecBase):
-    aliases = {
+    aliases: ClassVar = {
         'hide_output': 'hide',
         'caption_output': 'caption',
         'language_output': 'language',
         'linenos_output': 'linenos',
     }
-    defaults = {
+    defaults: ClassVar = {
         'caption': '',
         'language': 'none',
     }

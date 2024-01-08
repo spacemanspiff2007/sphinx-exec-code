@@ -1,6 +1,7 @@
 from .flag_config import SphinxConfigFlag
 from .path_config import SphinxConfigFolder, SphinxConfigMultipleFolderStr
 
+
 EXAMPLE_DIR = SphinxConfigFolder('exec_code_example_dir')
 
 # Options for code execution

@@ -46,7 +46,7 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages('src', exclude=['tests*']),
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         'Intended Audience :: Developers',
         'Framework :: Sphinx :: Extension',
         "License :: OSI Approved :: Apache Software License",
@@ -56,6 +56,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3 :: Only",
     ],
 )

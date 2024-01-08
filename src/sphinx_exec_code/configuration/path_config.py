@@ -4,7 +4,7 @@ from typing import Tuple
 from sphinx.application import Sphinx as SphinxApp
 
 from sphinx_exec_code.__const__ import log
-from sphinx_exec_code.configuration.base import SphinxConfigValue, TYPE_VALUE
+from sphinx_exec_code.configuration.base import TYPE_VALUE, SphinxConfigValue
 
 
 class InvalidPathError(Exception):
@@ -18,8 +18,9 @@ class SphinxConfigPath(SphinxConfigValue[TYPE_VALUE]):
         try:
             path = Path(value)
         except Exception:
-            raise InvalidPathError(f'Could not create Path from "{value}" (type {type(value).__name__}) '
-                                   f'(configured by {self.sphinx_name:s})') from None
+            msg = (f'Could not create Path from "{value}" (type {type(value).__name__}) '
+                   f'(configured by {self.sphinx_name:s})')
+            raise InvalidPathError(msg) from None
 
         if not path.is_absolute():
             path = (Path(app.confdir) / path).resolve()
@@ -27,7 +28,8 @@ class SphinxConfigPath(SphinxConfigValue[TYPE_VALUE]):
 
     def check_folder_exists(self, folder: Path) -> Path:
         if not folder.is_dir():
-            raise FileNotFoundError(f'Directory "{folder}" not found! (configured by {self.sphinx_name:s})')
+            msg = f'Directory "{folder}" not found! (configured by {self.sphinx_name:s})'
+            raise FileNotFoundError(msg)
         return folder
 
 

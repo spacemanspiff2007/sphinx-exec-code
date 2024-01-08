@@ -5,6 +5,7 @@ from sphinx.errors import ConfigError
 
 from sphinx_exec_code.__const__ import log
 
+
 TYPE_VALUE = TypeVar('TYPE_VALUE')
 
 
@@ -18,7 +19,8 @@ class SphinxConfigValue(Generic[TYPE_VALUE]):
     @property
     def value(self) -> TYPE_VALUE:
         if self._value is None:
-            raise ConfigError(f'{self.sphinx_name} is not set!')
+            msg = f'{self.sphinx_name} is not set!'
+            raise ConfigError(msg)
         return self._value
 
     def transform_value(self, app: SphinxApp, value):
@@ -40,5 +42,6 @@ class SphinxConfigValue(Generic[TYPE_VALUE]):
         self._value = self.validate_value(value)
         return self._value
 
-    def add_config_value(self, app: SphinxApp, sphinx_default):
+    def add_config_value(self, app: SphinxApp, sphinx_default: TYPE_VALUE):
+        self.validate_value(sphinx_default)
         app.add_config_value(self.sphinx_name, sphinx_default, 'env', self.SPHINX_TYPE)

@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 from typing import List
 
+
 re_line = re.compile(r'^\s*File "(<string>)", line (\d+), in <module>', re.MULTILINE)
 
 

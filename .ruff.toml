@@ -1,0 +1,85 @@
+
+line-length = 120
+indent-width = 4
+
+target-version = "py38"
+src = ["src", "test"]
+
+# https://docs.astral.sh/ruff/settings/#ignore-init-module-imports
+ignore-init-module-imports = true
+
+extend-exclude = ["__init__.py"]
+
+select = [
+    "E", "W",   # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+    "I",        # https://docs.astral.sh/ruff/rules/#isort-i
+    "UP",       # https://docs.astral.sh/ruff/rules/#pyupgrade-up
+
+    "A",        # https://docs.astral.sh/ruff/rules/#flake8-builtins-a
+    "ASYNC",    # https://docs.astral.sh/ruff/rules/#flake8-async-async
+    "C4",       # https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
+    "EM",       # https://docs.astral.sh/ruff/rules/#flake8-errmsg-em
+    "FIX",      # https://docs.astral.sh/ruff/rules/#flake8-fixme-fix
+    "INP",      # https://docs.astral.sh/ruff/rules/#flake8-no-pep420-inp
+    "ISC",      # https://docs.astral.sh/ruff/rules/#flake8-implicit-str-concat-isc
+    "PIE",      # https://docs.astral.sh/ruff/rules/#flake8-pie-pie
+    "PT",       # https://docs.astral.sh/ruff/rules/#flake8-pytest-style-pt
+    "PTH",      # https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
+    "RET",      # https://docs.astral.sh/ruff/rules/#flake8-return-ret
+    "SIM",      # https://docs.astral.sh/ruff/rules/#flake8-simplify-sim
+    "SLOT",     # https://docs.astral.sh/ruff/rules/#flake8-slots-slot
+    "T10",      # https://docs.astral.sh/ruff/rules/#flake8-debugger-t10
+    "TCH",      # https://docs.astral.sh/ruff/rules/#flake8-type-checking-tch
+    "TD",       # https://docs.astral.sh/ruff/rules/#flake8-todos-td
+
+    "TRY",      # https://docs.astral.sh/ruff/rules/#tryceratops-try
+    "FLY",      # https://docs.astral.sh/ruff/rules/#flynt-fly
+    "PERF",     # https://docs.astral.sh/ruff/rules/#perflint-perf
+    "RUF",      # https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
+
+    "PL",       # https://docs.astral.sh/ruff/rules/#pylint-pl
+]
+
+ignore = [
+    "RET501",   # https://docs.astral.sh/ruff/rules/unnecessary-return-none/#unnecessary-return-none-ret501
+    "TRY400",   # https://docs.astral.sh/ruff/rules/error-instead-of-exception/
+
+    "A003",     # https://docs.astral.sh/ruff/rules/builtin-attribute-shadowing/
+]
+
+
+[format]
+# Use single quotes for non-triple-quoted strings.
+quote-style = "single"
+
+
+
+[lint.per-file-ignores]
+"doc/*" = [
+    "A001",     # A001 Variable `copyright` is shadowing a Python builtin
+    "E402",     # E402 Module level import not at top of file
+    "INP001",   # INP001 File `FILE_NAME` is part of an implicit namespace package. Add an `__init__.py`.
+    "PTH100",   # PTH100 `os.path.abspath()` should be replaced by `Path.resolve()`
+    "PTH118",   # PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
+]
+
+"tests/*" = [
+    "INP001",   # INP001 File `FILE_NAME` is part of an implicit namespace package. Add an `__init__.py`.
+    "ISC002",   # ISC002 Implicitly concatenated string literals over multiple lines
+]
+
+"setup.py" = ["PTH123"]
+
+"src/sphinx_exec_code/code_exec_error.py" = [
+    "PERF401",  # PERF401 Use a list comprehension to create a transformed list
+    "PLW2901",  # PLW2901 `for` loop variable `tb_line` overwritten by assignment target
+]
+
+
+[lint.isort]
+# https://docs.astral.sh/ruff/settings/#isort-lines-after-imports
+lines-after-imports = 2
+
+
+[lint.pylint]
+max-args = 6

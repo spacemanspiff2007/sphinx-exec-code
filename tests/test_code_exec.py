@@ -8,15 +8,15 @@ from sphinx_exec_code.configuration import PYTHONPATH_FOLDERS, SET_UTF8_ENCODING
 
 
 @pytest.fixture()
-def setup_env(monkeypatch):
+def _setup_env(monkeypatch):
     f = Path(__file__).parent
     monkeypatch.setattr(WORKING_DIR, '_value', f)
     monkeypatch.setattr(PYTHONPATH_FOLDERS, '_value', [str(f)])
-    return None
 
 
 @pytest.mark.parametrize('utf8', [True, False])
-def test_print(setup_env, monkeypatch, utf8):
+@pytest.mark.usefixtures('_setup_env')
+def test_print(monkeypatch, utf8):
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
 
     code = "print('Line1')\nprint('Line2')"
@@ -25,7 +25,8 @@ def test_print(setup_env, monkeypatch, utf8):
 
 
 @pytest.mark.parametrize('utf8', [True, False])
-def test_print_table(setup_env, monkeypatch, utf8):
+@pytest.mark.usefixtures('_setup_env')
+def test_print_table(monkeypatch, utf8):
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
 
     code = "\n \n  \n\n" \
@@ -36,7 +37,8 @@ def test_print_table(setup_env, monkeypatch, utf8):
 
 
 @pytest.mark.parametrize('utf8', [True, False])
-def test_err(setup_env, monkeypatch, utf8):
+@pytest.mark.usefixtures('_setup_env')
+def test_err(monkeypatch, utf8):
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
 
     code = "print('Line1')\nprint('Line2')\n1/0"
@@ -60,7 +62,8 @@ IS_WIN = os.name == 'nt'
 
 
 @pytest.mark.skipif(not IS_WIN, reason='Windows only')
-def test_unicode_fails(setup_env, monkeypatch):
+@pytest.mark.usefixtures('_setup_env')
+def test_unicode_fails(monkeypatch):
     code = "print('●')"
 
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', False)
@@ -69,9 +72,13 @@ def test_unicode_fails(setup_env, monkeypatch):
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', True)
     assert execute_code(code, 'my_file', 1) == '●'
 
+    code = "print('This is a beautiful unicode character: \u265E.')"
+    assert execute_code(code, 'my_file', 1) == 'This is a beautiful unicode character: \u265E.'
+
 
 @pytest.mark.skipif(IS_WIN, reason='Fails on Windows')
-def test_unicode_no_utf8(setup_env, monkeypatch):
+@pytest.mark.usefixtures('_setup_env')
+def test_unicode_no_utf8(monkeypatch):
     code = "print('●')"
 
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', False)

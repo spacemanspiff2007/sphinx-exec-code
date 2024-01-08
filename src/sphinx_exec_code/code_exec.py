@@ -22,7 +22,7 @@ def execute_code(code: str, file: Path, first_loc: int) -> str:
             env['PYTHONPATH'] = os.pathsep.join(python_folders)
 
     run = subprocess.run([sys.executable, '-c', code.encode('utf-8')], capture_output=True, text=True,
-                         encoding=encoding, cwd=cwd, env=env)
+                         encoding=encoding, cwd=cwd, env=env, check=False)
 
     if run.returncode != 0:
         raise CodeExceptionError(code, file, first_loc, run.returncode, run.stderr) from None

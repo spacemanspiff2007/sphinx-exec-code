@@ -10,14 +10,17 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import logging
+
 import os
 import sys
 
-# required for sphinx_exec_code
+
+# required for sphinx_exec_code to be found
 sys.path.insert(0, os.path.join(os.path.abspath('..'), 'src'))
 
+
 import sphinx_exec_code
+
 
 # -- Project information -----------------------------------------------------
 project = 'sphinx-exec-code'

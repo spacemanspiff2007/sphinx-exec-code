@@ -16,7 +16,6 @@ def builder_ready(app: SphinxApp):
     WORKING_DIR.from_app(app)
     PYTHONPATH_FOLDERS.from_app(app)
     SET_UTF8_ENCODING.from_app(app)
-    return None
 
 
 def setup(app):
@@ -33,7 +32,7 @@ def setup(app):
     EXAMPLE_DIR.add_config_value(app, confdir)
     WORKING_DIR.add_config_value(app, confdir.parent)
     PYTHONPATH_FOLDERS.add_config_value(app, code_folders)
-    SET_UTF8_ENCODING.add_config_value(app, True if os.name == 'nt' else False)  # Somehow this workaround is required
+    SET_UTF8_ENCODING.add_config_value(app, os.name == 'nt')
 
     app.connect('builder-inited', builder_ready)
     app.add_directive('exec_code', ExecCode)

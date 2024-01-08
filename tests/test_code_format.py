@@ -1,6 +1,6 @@
 import pytest
 
-from sphinx_exec_code.code_format import get_show_exec_code, VisibilityMarkerError
+from sphinx_exec_code.code_format import VisibilityMarkerError, get_show_exec_code
 
 
 def test_format_hide():

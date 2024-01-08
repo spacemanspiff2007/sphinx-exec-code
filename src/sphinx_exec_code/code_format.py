@@ -21,15 +21,15 @@ class CodeMarker:
     def is_marker(self, line: str) -> bool:
         if line == self.start:
             if not self.do_add:
-                raise VisibilityMarkerError(f'{self.start[1:]} already called! '
-                                            f'Use {self.stop[1:]} or {self.toggle[1:]}!')
+                msg = f'{self.start[1:]} already called! Use {self.stop[1:]} or {self.toggle[1:]}!'
+                raise VisibilityMarkerError(msg)
             self.do_add = False
             return True
 
         if line == self.stop:
             if self.do_add:
-                raise VisibilityMarkerError(f'{self.stop[1:]} already called! '
-                                            f'Use {self.start[1:]} or {self.toggle[1:]}!')
+                msg = f'{self.stop[1:]} already called! Use {self.start[1:]} or {self.toggle[1:]}!'
+                raise VisibilityMarkerError(msg)
             self.do_add = True
             self.skip_empty = True
             return True

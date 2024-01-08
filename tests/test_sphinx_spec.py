@@ -4,7 +4,7 @@ from typing import Type
 import pytest
 from docutils.parsers.rst import directives
 
-from sphinx_exec_code.sphinx_spec import build_spec, SpecCode, SpecOutput, SphinxSpecBase
+from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec
 
 
 def test_aliases_unique():
@@ -14,7 +14,7 @@ def test_aliases_unique():
         assert key_output not in SpecCode.aliases
 
 
-@pytest.mark.parametrize('cls', (SpecCode, SpecOutput))
+@pytest.mark.parametrize('cls', [SpecCode, SpecOutput])
 def test_default_in_aliases(cls: Type[SphinxSpecBase]):
     names = list(cls.aliases.values())
     for k in cls.defaults:
