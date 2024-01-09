@@ -28,6 +28,14 @@ class SphinxSpecBase:
                 if not val:
                     val = cls.defaults[name]
                 opts[name] = val
+
+        if left := set(options) - set(cls.aliases):
+            msg = (
+                f'Invalid option{"s" if len(left) != 1 else ""}: '
+                f'{", ".join(sorted(map(str, left)))}! Supported: {", ".join(sorted(map(str, cls.aliases)))}'
+            )
+            raise ValueError(msg)
+
         return cls(**opts)
 
     @classmethod

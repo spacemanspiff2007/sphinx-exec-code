@@ -42,12 +42,12 @@ def test_build_spec_code():
 
 
 def test_spec_code():
-    obj = SpecCode.from_options({'linenos': None, 'caption': 'my_header'})
+    obj = SpecCode.from_options({'linenos': None, 'caption': 'my_header', 'filename': 'filename'})
     assert obj.caption == 'my_header'
     assert obj.language == 'python'
     assert obj.linenos is True
     assert obj.hide is False
-    assert obj.filename == ''
+    assert obj.filename == 'filename'
 
 
 def test_spec_output():
@@ -56,3 +56,11 @@ def test_spec_output():
     assert obj.language == 'none'
     assert obj.linenos is False
     assert obj.hide is True
+
+
+def test_invalid_options():
+    with pytest.raises(ValueError) as e:
+        SpecOutput.from_options({'hide-output': None})
+
+    assert str(e.value) == ('Invalid option: hide-output! '
+                            'Supported: caption_output, hide_output, language_output, linenos_output')
