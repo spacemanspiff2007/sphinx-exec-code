@@ -4,7 +4,7 @@ from typing import Type
 import pytest
 from docutils.parsers.rst import directives
 
-from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec
+from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec, get_specs
 
 
 def test_aliases_unique():
@@ -60,14 +60,16 @@ def test_spec_output():
 
 def test_invalid_options():
     with pytest.raises(ValueError) as e:    # noqa: PT011
-        SpecOutput.from_options({'hide-output': None})
+        get_specs({'hide-output': None})
 
     assert str(e.value) == ('Invalid option: hide-output! '
-                            'Supported: caption_output, hide_output, language_output, linenos_output')
+                            'Supported: caption, caption_output, filename, hide_code, hide_output, '
+                            'language, language_output, linenos, linenos_output')
 
 
     with pytest.raises(ValueError) as e:    # noqa: PT011
-        SpecOutput.from_options({'hide-output': None, 'language_output': 'asdf', 'caption-output': 'test'})
+        get_specs({'hide-output': None, 'language_output': 'asdf', 'caption-output': 'test'})
 
     assert str(e.value) == ('Invalid options: caption-output, hide-output! '
-                            'Supported: caption_output, hide_output, language_output, linenos_output')
+                            'Supported: caption, caption_output, filename, hide_code, hide_output, '
+                            'language, language_output, linenos, linenos_output')

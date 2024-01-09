@@ -1,4 +1,4 @@
-from typing import Any, Callable, ClassVar, Dict
+from typing import Any, Callable, ClassVar, Dict, Tuple
 
 from docutils.parsers.rst import directives  # type: ignore
 
@@ -29,13 +29,6 @@ class SphinxSpecBase:
                     val = cls.defaults[name]
                 opts[name] = val
 
-        if left := set(options) - set(cls.aliases):
-            msg = (
-                f'Invalid option{"s" if len(left) != 1 else ""}: '
-                f'{", ".join(sorted(map(str, left)))}! Supported: {", ".join(sorted(map(str, cls.aliases)))}'
-            )
-            raise ValueError(msg)
-
         return cls(**opts)
 
     @classmethod
@@ -50,6 +43,20 @@ def build_spec() -> Dict[str, Callable[[Any], Any]]:
     SpecCode.update_spec(spec)
     SpecOutput.update_spec(spec)
     return spec
+
+
+def get_specs(options: Dict[str, Any]) -> Tuple['SpecCode', 'SpecOutput']:
+    supported = set(SpecCode.aliases) | set(SpecOutput.aliases)
+    invalid = set(options) - supported
+
+    if invalid:
+        msg = (
+            f'Invalid option{"s" if len(invalid) != 1 else ""}: '
+            f'{", ".join(sorted(map(str, invalid)))}! Supported: {", ".join(sorted(map(str, supported)))}'
+        )
+        raise ValueError(msg)
+
+    return SpecCode.from_options(options), SpecOutput.from_options(options)
 
 
 class SpecCode(SphinxSpecBase):
