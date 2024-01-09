@@ -59,8 +59,15 @@ def test_spec_output():
 
 
 def test_invalid_options():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError) as e:    # noqa: PT011
         SpecOutput.from_options({'hide-output': None})
 
     assert str(e.value) == ('Invalid option: hide-output! '
+                            'Supported: caption_output, hide_output, language_output, linenos_output')
+
+
+    with pytest.raises(ValueError) as e:    # noqa: PT011
+        SpecOutput.from_options({'hide-output': None, 'language_output': 'asdf', 'caption-output': 'test'})
+
+    assert str(e.value) == ('Invalid options: caption-output, hide-output! '
                             'Supported: caption_output, hide_output, language_output, linenos_output')
