@@ -4,7 +4,7 @@ from typing import Type
 import pytest
 from docutils.parsers.rst import directives
 
-from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec
+from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec, get_specs
 
 
 def test_aliases_unique():
@@ -42,12 +42,12 @@ def test_build_spec_code():
 
 
 def test_spec_code():
-    obj = SpecCode.from_options({'linenos': None, 'caption': 'my_header'})
+    obj = SpecCode.from_options({'linenos': None, 'caption': 'my_header', 'filename': 'filename'})
     assert obj.caption == 'my_header'
     assert obj.language == 'python'
     assert obj.linenos is True
     assert obj.hide is False
-    assert obj.filename == ''
+    assert obj.filename == 'filename'
 
 
 def test_spec_output():
@@ -56,3 +56,20 @@ def test_spec_output():
     assert obj.language == 'none'
     assert obj.linenos is False
     assert obj.hide is True
+
+
+def test_invalid_options():
+    with pytest.raises(ValueError) as e:    # noqa: PT011
+        get_specs({'hide-output': None})
+
+    assert str(e.value) == ('Invalid option: hide-output! '
+                            'Supported: caption, caption_output, filename, hide_code, hide_output, '
+                            'language, language_output, linenos, linenos_output')
+
+
+    with pytest.raises(ValueError) as e:    # noqa: PT011
+        get_specs({'hide-output': None, 'language_output': 'asdf', 'caption-output': 'test'})
+
+    assert str(e.value) == ('Invalid options: caption-output, hide-output! '
+                            'Supported: caption, caption_output, filename, hide_code, hide_output, '
+                            'language, language_output, linenos, linenos_output')

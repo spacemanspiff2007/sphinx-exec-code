@@ -36,6 +36,9 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.12 (2024-01-09)
+- Error when providing invalid options
+
 #### 0.11 (2024-01-09)
 - Updated CI and ruff fixes
 

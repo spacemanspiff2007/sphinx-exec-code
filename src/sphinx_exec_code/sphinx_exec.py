@@ -10,7 +10,7 @@ from sphinx_exec_code.__const__ import log
 from sphinx_exec_code.code_exec import CodeExceptionError, execute_code
 from sphinx_exec_code.code_format import VisibilityMarkerError, get_show_exec_code
 from sphinx_exec_code.configuration import EXAMPLE_DIR
-from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec
+from sphinx_exec_code.sphinx_spec import SphinxSpecBase, build_spec, get_specs
 
 
 def create_literal_block(objs: list, code: str, spec: SphinxSpecBase):
@@ -83,7 +83,7 @@ class ExecCode(SphinxDirective):
         file = Path(raw_file)
         line = self._get_code_line(raw_line, content)
 
-        code_spec = SpecCode.from_options(self.options)
+        code_spec, output_spec = get_specs(self.options)
 
         # Read from example files
         if code_spec.filename:
@@ -115,5 +115,5 @@ class ExecCode(SphinxDirective):
             raise ExtensionError(msg) from None
 
         # Show the output from the code execution
-        create_literal_block(output, code_results, spec=SpecOutput.from_options(self.options))
+        create_literal_block(output, code_results, spec=output_spec)
         return output
