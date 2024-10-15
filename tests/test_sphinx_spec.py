@@ -7,7 +7,7 @@ from docutils.parsers.rst import directives
 from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec, get_specs
 
 
-def test_aliases_unique():
+def test_aliases_unique() -> None:
     for key_code in SpecCode.aliases:
         assert key_code not in SpecOutput.aliases
     for key_output in SpecOutput.aliases:
@@ -15,13 +15,13 @@ def test_aliases_unique():
 
 
 @pytest.mark.parametrize('cls', [SpecCode, SpecOutput])
-def test_default_in_aliases(cls: Type[SphinxSpecBase]):
+def test_default_in_aliases(cls: Type[SphinxSpecBase]) -> None:
     names = list(cls.aliases.values())
     for k in cls.defaults:
         assert k in names
 
 
-def test_build_spec_code():
+def test_build_spec_code() -> None:
     spec = build_spec()
 
     for name in chain(SpecCode.aliases.keys(), SpecOutput.aliases.keys()):
@@ -41,7 +41,7 @@ def test_build_spec_code():
     }
 
 
-def test_spec_code():
+def test_spec_code() -> None:
     obj = SpecCode.from_options({'linenos': None, 'caption': 'my_header', 'filename': 'filename'})
     assert obj.caption == 'my_header'
     assert obj.language == 'python'
@@ -50,7 +50,7 @@ def test_spec_code():
     assert obj.filename == 'filename'
 
 
-def test_spec_output():
+def test_spec_output() -> None:
     obj = SpecOutput.from_options({'hide_output': None, 'caption_output': 'my_header_out'})
     assert obj.caption == 'my_header_out'
     assert obj.language == 'none'
@@ -58,7 +58,7 @@ def test_spec_output():
     assert obj.hide is True
 
 
-def test_invalid_options():
+def test_invalid_options() -> None:
     with pytest.raises(ValueError) as e:    # noqa: PT011
         get_specs({'hide-output': None})
 

@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Any
 
 from sphinx.application import Sphinx as SphinxApp
 
@@ -10,7 +11,7 @@ from sphinx_exec_code.sphinx_exec import ExecCode
 from .configuration import EXAMPLE_DIR, PYTHONPATH_FOLDERS, SET_UTF8_ENCODING, WORKING_DIR
 
 
-def builder_ready(app: SphinxApp):
+def builder_ready(app: SphinxApp) -> None:
     # load configuration
     EXAMPLE_DIR.from_app(app)
     WORKING_DIR.from_app(app)
@@ -18,7 +19,7 @@ def builder_ready(app: SphinxApp):
     SET_UTF8_ENCODING.from_app(app)
 
 
-def setup(app):
+def setup(app) -> dict[str, Any]:
     """ Register sphinx_execute_code directive with Sphinx """
 
     confdir = Path(app.confdir)

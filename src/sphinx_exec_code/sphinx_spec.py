@@ -7,7 +7,7 @@ class SphinxSpecBase:
     aliases: ClassVar[Dict[str, str]]
     defaults: ClassVar[Dict[str, str]]
 
-    def __init__(self, hide: bool, linenos: bool, caption: str, language: str):
+    def __init__(self, hide: bool, linenos: bool, caption: str, language: str) -> None:
         # flags
         self.hide = hide
         self.linenos = linenos
@@ -32,7 +32,7 @@ class SphinxSpecBase:
         return cls(**opts)
 
     @classmethod
-    def update_spec(cls, spec: Dict[str, Callable[[Any], Any]]):
+    def update_spec(cls, spec: Dict[str, Callable[[Any], Any]]) -> None:
         for alias, name in cls.aliases.items():
             # Flags don't have a default
             spec[alias] = directives.flag if name not in cls.defaults else directives.unchanged
@@ -73,7 +73,7 @@ class SpecCode(SphinxSpecBase):
         'filename': '',
     }
 
-    def __init__(self, hide: bool, linenos: bool, caption: str, language: str, filename: str):
+    def __init__(self, hide: bool, linenos: bool, caption: str, language: str, filename: str) -> None:
         super().__init__(hide, linenos, caption, language)
         self.filename: str = filename
 

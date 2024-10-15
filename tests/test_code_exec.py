@@ -8,7 +8,7 @@ from sphinx_exec_code.configuration import PYTHONPATH_FOLDERS, SET_UTF8_ENCODING
 
 
 @pytest.fixture()
-def _setup_env(monkeypatch):
+def _setup_env(monkeypatch) -> None:
     f = Path(__file__).parent
     monkeypatch.setattr(WORKING_DIR, '_value', f)
     monkeypatch.setattr(PYTHONPATH_FOLDERS, '_value', [str(f)])
@@ -16,7 +16,7 @@ def _setup_env(monkeypatch):
 
 @pytest.mark.parametrize('utf8', [True, False])
 @pytest.mark.usefixtures('_setup_env')
-def test_print(monkeypatch, utf8):
+def test_print(monkeypatch, utf8) -> None:
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
 
     code = "print('Line1')\nprint('Line2')"
@@ -26,7 +26,7 @@ def test_print(monkeypatch, utf8):
 
 @pytest.mark.parametrize('utf8', [True, False])
 @pytest.mark.usefixtures('_setup_env')
-def test_print_table(monkeypatch, utf8):
+def test_print_table(monkeypatch, utf8) -> None:
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
 
     code = "\n \n  \n\n" \
@@ -38,7 +38,7 @@ def test_print_table(monkeypatch, utf8):
 
 @pytest.mark.parametrize('utf8', [True, False])
 @pytest.mark.usefixtures('_setup_env')
-def test_err(monkeypatch, utf8):
+def test_err(monkeypatch, utf8) -> None:
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
 
     code = "print('Line1')\nprint('Line2')\n1/0"
@@ -63,7 +63,7 @@ IS_WIN = os.name == 'nt'
 
 @pytest.mark.skipif(not IS_WIN, reason='Windows only')
 @pytest.mark.usefixtures('_setup_env')
-def test_unicode_fails(monkeypatch):
+def test_unicode_fails(monkeypatch) -> None:
     code = "print('●')"
 
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', False)
@@ -78,7 +78,7 @@ def test_unicode_fails(monkeypatch):
 
 @pytest.mark.skipif(IS_WIN, reason='Fails on Windows')
 @pytest.mark.usefixtures('_setup_env')
-def test_unicode_no_utf8(monkeypatch):
+def test_unicode_no_utf8(monkeypatch) -> None:
     code = "print('●')"
 
     monkeypatch.setattr(SET_UTF8_ENCODING, '_value', False)

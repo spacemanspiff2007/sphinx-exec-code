@@ -7,7 +7,7 @@ re_line = re.compile(r'^\s*File "(<string>)", line (\d+), in <module>', re.MULTI
 
 
 class CodeExceptionError(Exception):
-    def __init__(self, code: str, file: Path, first_loc: int, ret: int, stderr: str):
+    def __init__(self, code: str, file: Path, first_loc: int, ret: int, stderr: str) -> None:
         self.code = code
 
         self.file: Path = file

@@ -8,7 +8,7 @@ class VisibilityMarkerError(Exception):
 class CodeMarker:
     MARKERS = ('hide', 'skip')
 
-    def __init__(self, marker: str):
+    def __init__(self, marker: str) -> None:
         assert marker in CodeMarker.MARKERS
         self.start = f'#{marker}:start'
         self.stop = f'#{marker}:stop'
@@ -40,7 +40,7 @@ class CodeMarker:
 
         return False
 
-    def add_line(self, line: str):
+    def add_line(self, line: str) -> None:
         if not self.do_add:
             return None
 

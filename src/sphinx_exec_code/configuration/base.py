@@ -12,7 +12,7 @@ TYPE_VALUE = TypeVar('TYPE_VALUE')
 class SphinxConfigValue(Generic[TYPE_VALUE]):
     SPHINX_TYPE: Union[Tuple[Type[Any], ...], Type[Any]]
 
-    def __init__(self, sphinx_name: str, initial_value: Optional[TYPE_VALUE] = None):
+    def __init__(self, sphinx_name: str, initial_value: Optional[TYPE_VALUE] = None) -> None:
         self.sphinx_name: Final = sphinx_name
         self._value: Optional[TYPE_VALUE] = initial_value
 
@@ -23,7 +23,7 @@ class SphinxConfigValue(Generic[TYPE_VALUE]):
             raise ConfigError(msg)
         return self._value
 
-    def transform_value(self, app: SphinxApp, value):
+    def transform_value(self, app: SphinxApp, value: Any) -> TYPE_VALUE:
         return value
 
     def validate_value(self, value) -> TYPE_VALUE:
@@ -42,6 +42,6 @@ class SphinxConfigValue(Generic[TYPE_VALUE]):
         self._value = self.validate_value(value)
         return self._value
 
-    def add_config_value(self, app: SphinxApp, sphinx_default: TYPE_VALUE):
+    def add_config_value(self, app: SphinxApp, sphinx_default: TYPE_VALUE) -> None:
         self.validate_value(sphinx_default)
         app.add_config_value(self.sphinx_name, sphinx_default, 'env', self.SPHINX_TYPE)

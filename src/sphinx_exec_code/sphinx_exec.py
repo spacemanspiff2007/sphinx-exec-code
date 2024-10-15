@@ -13,7 +13,7 @@ from sphinx_exec_code.configuration import EXAMPLE_DIR
 from sphinx_exec_code.sphinx_spec import SphinxSpecBase, build_spec, get_specs
 
 
-def create_literal_block(objs: list, code: str, spec: SphinxSpecBase):
+def create_literal_block(objs: list, code: str, spec: SphinxSpecBase) -> None:
     if spec.hide or not code:
         return None
 

@@ -6,7 +6,7 @@ from sphinx_exec_code.configuration.path_config import InvalidPathError
 from sphinx_exec_code.configuration.values import SphinxConfigFolder
 
 
-def test_path_errors():
+def test_path_errors() -> None:
     a = SphinxConfigFolder('config_key_name')
 
     with pytest.raises(FileNotFoundError) as e:
