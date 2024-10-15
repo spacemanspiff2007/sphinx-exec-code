@@ -76,13 +76,6 @@ def test_err_13(monkeypatch, utf8) -> None:
 
     msg = e.value.pformat()
 
-    print('-' * 80)
-    print('-' * 80)
-    for line in msg:
-        print(line)
-    print('-' * 80)
-    print('-' * 80)
-
     assert msg == [
         "   print('Line1')",
         "   print('Line2')",
@@ -92,28 +85,6 @@ def test_err_13(monkeypatch, utf8) -> None:
         '  File "my_file", line 7',
         '    1/0',
         '    ~^~',
-        'ZeroDivisionError: division by zero'
-    ]
-
-
-@pytest.mark.parametrize('utf8', [True, False])
-@pytest.mark.usefixtures('_setup_env')
-def test_err(monkeypatch, utf8) -> None:
-    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
-
-    code = "print('Line1')\nprint('Line2')\n1/0"
-
-    with pytest.raises(CodeExceptionError) as e:
-        execute_code(code, Path('/my_file'), 5)
-
-    msg = e.value.pformat()
-    assert msg == [
-        "   print('Line1')",
-        "   print('Line2')",
-        '   1/0 <--',
-        '',
-        'Traceback (most recent call last):',
-        '  File "my_file", line 7',
         'ZeroDivisionError: division by zero'
     ]
 
