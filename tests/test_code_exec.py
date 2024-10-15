@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -34,6 +35,63 @@ def test_print_table(monkeypatch, utf8) -> None:
            "print(' Col1 | 1 | 2 |')"
     output = execute_code(code, 'my_file', 1)
     assert output == '      | A | B |\n Col1 | 1 | 2 |'
+
+
+PYTHON_3_13 = sys.version_info[:2] >= (3, 13)
+
+
+@pytest.mark.skipif(PYTHON_3_13, reason='Old traceback')
+@pytest.mark.parametrize('utf8', [True, False])
+@pytest.mark.usefixtures('_setup_env')
+def test_err_12(monkeypatch, utf8) -> None:
+    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
+
+    code = "print('Line1')\nprint('Line2')\n1/0"
+
+    with pytest.raises(CodeExceptionError) as e:
+        execute_code(code, Path('/my_file'), 5)
+
+    msg = e.value.pformat()
+    assert msg == [
+        "   print('Line1')",
+        "   print('Line2')",
+        '   1/0 <--',
+        '',
+        'Traceback (most recent call last):',
+        '  File "my_file", line 7',
+        'ZeroDivisionError: division by zero'
+    ]
+
+
+@pytest.mark.skipif(not PYTHON_3_13, reason='Old traceback')
+@pytest.mark.parametrize('utf8', [True, False])
+@pytest.mark.usefixtures('_setup_env')
+def test_err_13(monkeypatch, utf8) -> None:
+    monkeypatch.setattr(SET_UTF8_ENCODING, '_value', utf8)
+
+    code = "print('Line1')\nprint('Line2')\n1/0"
+
+    with pytest.raises(CodeExceptionError) as e:
+        execute_code(code, Path('/my_file'), 5)
+
+    msg = e.value.pformat()
+
+    print('-' * 80)
+    print('-' * 80)
+    for line in msg:
+        print(line)
+    print('-' * 80)
+    print('-' * 80)
+
+    assert msg == [
+        "   print('Line1')",
+        "   print('Line2')",
+        '   1/0 <--',
+        '',
+        'Traceback (most recent call last):',
+        '  File "my_file", line 7',
+        'ZeroDivisionError: division by zero'
+    ]
 
 
 @pytest.mark.parametrize('utf8', [True, False])
