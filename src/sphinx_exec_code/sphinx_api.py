@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 from sphinx.application import Sphinx as SphinxApp
 
@@ -19,7 +19,7 @@ def builder_ready(app: SphinxApp) -> None:
     SET_UTF8_ENCODING.from_app(app)
 
 
-def setup(app) -> dict[str, Any]:
+def setup(app) -> Dict[str, Any]:
     """ Register sphinx_execute_code directive with Sphinx """
 
     confdir = Path(app.confdir)
