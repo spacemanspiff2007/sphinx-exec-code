@@ -90,6 +90,8 @@ def test_err_13(monkeypatch, utf8) -> None:
         '',
         'Traceback (most recent call last):',
         '  File "my_file", line 7',
+        '    1/0',
+        '    ~^~',
         'ZeroDivisionError: division by zero'
     ]
 
