@@ -1,7 +1,14 @@
-pytest      == 7.4.4
-pre-commit  == 3.5.0
+# Dependencies for old python versions
+pre-commit  == 3.5.0; python_version < '3.9'
+pytest      == 7.4.4; python_version < '3.10'
+sphinx      == 7.4.7; python_version == '3.9'
+sphinx      == 7.1.2; python_version == '3.8'
 
-ruff == 0.1.11
+# Current dependencies
+pre-commit  == 4.0.1; python_version >= '3.9'
+pytest      == 8.3.3; python_version >= '3.10'
+sphinx      == 8.1.3; python_version >= '3.10'
 
-sphinx           == 7.1.2
-sphinx-rtd-theme == 2.0.0
+ruff        == 0.6.9
+
+sphinx-rtd-theme == 3.0.1
