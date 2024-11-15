@@ -1,52 +1,80 @@
-from typing import Any, Callable, ClassVar, Dict, Tuple
+from typing import Any, ClassVar, Dict, Final, Tuple
 
+from docutils.nodes import literal_block
 from docutils.parsers.rst import directives  # type: ignore
+from sphinx.directives.code import CodeBlock
+from sphinx.util.typing import OptionSpec
+
+from sphinx_exec_code.__const__ import log
 
 
 class SphinxSpecBase:
-    aliases: ClassVar[Dict[str, str]]
     defaults: ClassVar[Dict[str, str]]
+    drop_code_block_option: ClassVar[Tuple[str, ...]]
 
-    def __init__(self, hide: bool, linenos: bool, caption: str, language: str) -> None:
-        # flags
-        self.hide = hide
-        self.linenos = linenos
-        # values
-        self.caption = caption
-        self.language = language
+    @staticmethod
+    def _alias_to_name(alias: str) -> str:
+        raise NotImplementedError()
+
+    @staticmethod
+    def _name_to_alias(name: str) -> str:
+        raise NotImplementedError()
+
+    def __init__(self, spec: Dict[str, Any]) -> None:
+        self.hide: Final = spec.pop('hide')
+        self.language: Final = spec.pop('language')
+        self.spec: Final = spec
+
+    def set_block_spec(self, block: literal_block) -> None:
+        for name, value in self.spec.items():
+            block[name] = value
+        return None
 
     @classmethod
     def from_options(cls, options: Dict[str, Any]) -> 'SphinxSpecBase':
-        opts = {}
-        for alias, name in cls.aliases.items():
-            if name not in cls.defaults:
-                # is a flag
-                opts[name] = alias in options
-            else:
-                # is a value
-                val = options.get(alias, None)
-                if not val:
-                    val = cls.defaults[name]
-                opts[name] = val
+        spec_names = tuple(cls.create_spec().keys())
 
-        return cls(**opts)
+        spec = {cls._alias_to_name(n): v for n, v in cls.defaults.items()}
+        for name in spec_names:
+            if name not in options:
+                continue
+            spec[cls._alias_to_name(name)] = options[name]
+
+        return cls(spec=spec)
 
     @classmethod
-    def update_spec(cls, spec: Dict[str, Callable[[Any], Any]]) -> None:
-        for alias, name in cls.aliases.items():
-            # Flags don't have a default
-            spec[alias] = directives.flag if name not in cls.defaults else directives.unchanged
+    def create_spec(cls) -> OptionSpec:
+
+        # spec from CodeBlock
+        this_spec: OptionSpec = {}
+        for name, directive in CodeBlock.option_spec.items():
+            if name in cls.drop_code_block_option:
+                continue
+            this_spec[cls._name_to_alias(name)] = directive
+
+        # own flags after the default flags so we overwrite them in case we have duplicate names
+        for name, default in cls.defaults.items():
+            # all own options are currently strings
+            if isinstance(default, str):
+                this_spec[cls._name_to_alias(name)] = directives.unchanged
+            elif isinstance(default, bool):
+                this_spec[cls._name_to_alias(name)] = directives.flag
+            else:
+                msg = f'Unsupported type {type(default)} for default "{name:s}"!'
+                raise TypeError(msg)
+
+        return this_spec
 
 
-def build_spec() -> Dict[str, Callable[[Any], Any]]:
-    spec = {}
-    SpecCode.update_spec(spec)
-    SpecOutput.update_spec(spec)
+def build_spec() -> OptionSpec:
+    spec: OptionSpec = {}
+    spec.update(SpecCode.create_spec())
+    spec.update(SpecOutput.create_spec())
     return spec
 
 
 def get_specs(options: Dict[str, Any]) -> Tuple['SpecCode', 'SpecOutput']:
-    supported = set(SpecCode.aliases) | set(SpecOutput.aliases)
+    supported = set(SpecCode.create_spec()) | set(SpecOutput.create_spec())
     invalid = set(options) - supported
 
     if invalid:
@@ -60,32 +88,47 @@ def get_specs(options: Dict[str, Any]) -> Tuple['SpecCode', 'SpecOutput']:
 
 
 class SpecCode(SphinxSpecBase):
-    aliases: ClassVar = {
-        'hide_code': 'hide',
-        'caption': 'caption',
-        'language': 'language',
-        'linenos': 'linenos',
-        'filename': 'filename',
-    }
+    drop_code_block_option: ClassVar = ()
     defaults: ClassVar = {
         'caption': '',
-        'language': 'python',
         'filename': '',
+        'hide_code': False,    # deprecated 2024 - remove after some time, must come before the new hide flag!
+        'hide': False,
+        'language': 'python',
     }
 
-    def __init__(self, hide: bool, linenos: bool, caption: str, language: str, filename: str) -> None:
-        super().__init__(hide, linenos, caption, language)
-        self.filename: str = filename
+    @staticmethod
+    def _alias_to_name(alias: str) -> str:
+        if alias == 'hide_code':
+            log.info('The "hide_code" directive is deprecated! Use "hide" instead!')
+            return 'hide'
+        return alias
+
+    @staticmethod
+    def _name_to_alias(name: str) -> str:
+        return name
+
+    def __init__(self, **kwargs: Dict[str, Any]) -> None:
+        super().__init__(**kwargs)
+        self.filename: Final[str] = self.spec.pop('filename')
 
 
 class SpecOutput(SphinxSpecBase):
-    aliases: ClassVar = {
-        'hide_output': 'hide',
-        'caption_output': 'caption',
-        'language_output': 'language',
-        'linenos_output': 'linenos',
-    }
+    @staticmethod
+    def _alias_to_name(alias: str) -> str:
+        if alias.endswith('_output'):
+            return alias[:-7]
+        return alias
+
+    @staticmethod
+    def _name_to_alias(name: str) -> str:
+        if name.endswith('_output'):
+            return name[:-7]
+        return name + '_output'
+
+    drop_code_block_option: ClassVar = ('name', )
     defaults: ClassVar = {
         'caption': '',
+        'hide': False,
         'language': 'none',
     }

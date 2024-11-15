@@ -1,34 +1,19 @@
 import traceback
 from pathlib import Path
-from typing import List
+from tokenize import String
+from typing import List, Final, Tuple, Any
 
 from docutils import nodes
+from docutils.statemachine import StringList, StateMachine
+from sphinx.directives.code import CodeBlock
 from sphinx.errors import ExtensionError
-from sphinx.util.docutils import SphinxDirective
+from sphinx.util.docutils import SphinxDirective, LoggingReporter
 
 from sphinx_exec_code.__const__ import log
 from sphinx_exec_code.code_exec import CodeExceptionError, execute_code
 from sphinx_exec_code.code_format import VisibilityMarkerError, get_show_exec_code
 from sphinx_exec_code.configuration import EXAMPLE_DIR
 from sphinx_exec_code.sphinx_spec import SphinxSpecBase, build_spec, get_specs
-
-
-def create_literal_block(objs: list, code: str, spec: SphinxSpecBase) -> None:
-    if spec.hide or not code:
-        return None
-
-    # generate header if specified
-    if spec.caption:
-        objs.append(nodes.caption(text=spec.caption))
-
-    # generate code block
-    block = nodes.literal_block(code, code)
-    objs.append(block)
-
-    # set linenos
-    block['linenos'] = spec.linenos
-    block['language'] = spec.language
-    return None
 
 
 class ExecCode(SphinxDirective):
@@ -57,7 +42,7 @@ class ExecCode(SphinxDirective):
             msg = f'Error while running {name}!'
             raise ExtensionError(msg, orig_exc=e) from None
 
-    def _get_code_line(self, line_no: int, content: List[str]) -> int:
+    def _get_code_line(self, line_no: int, content: StringList) -> int:
         """Get the first line number of the code"""
         if not content:
             return line_no
@@ -99,7 +84,7 @@ class ExecCode(SphinxDirective):
             raise ExtensionError(msg, orig_exc=e) from None
 
         # Show the code from the user
-        create_literal_block(output, code_show, spec=code_spec)
+        self.create_literal_block(output, code_show, code_spec, str(file), line)
 
         try:
             code_results = execute_code(code_exec, file, line)
@@ -115,5 +100,31 @@ class ExecCode(SphinxDirective):
             raise ExtensionError(msg) from None
 
         # Show the output from the code execution
-        create_literal_block(output, code_results, spec=output_spec)
+        self.create_literal_block(output, code_results, output_spec, str(file), line)
         return output
+
+    def create_literal_block(self, objs: list, code: str, spec: SphinxSpecBase, file: str, line: int) -> None:
+        if spec.hide or not code:
+            return None
+
+        c = CodeBlock(
+            'code-block', [spec.language], spec.spec,
+            StringList(code.splitlines()),
+            line,
+            # I'm not sure what these two do
+            self.content_offset, '',
+            # Make the state machine report the proper source file because we support loading from files
+            self.state, DummyStateMachine(file, self.state_machine.reporter)
+        )
+
+        objs.extend(c.run())
+        return None
+
+
+class DummyStateMachine:
+    def __init__(self, source: str, reporter: Any) -> None:
+        self._source: Final = source
+        self.reporter: Final = reporter
+
+    def get_source_and_line(self, line: int) -> Tuple[str, int]:
+        return self._source, line

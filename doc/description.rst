@@ -23,14 +23,21 @@ Generated view
 Options
 ------------------------------
 It's possible to further configure both the code block and the output block with the following options:
+`See sphinx docs <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code>`_
+for a detailed description
 
-
-hide_code/hide_output:
+hide/hide_output:
   Will hide the corresponding block
+name
+  Define implicit target name that can be referenced by using ref. For example:
 caption/caption_output
   Will add a caption above the block
 linenos/linenos_output
   Will add line numbers
+lineno-start/lineno-start_output
+  Set the first line number of the block. Linenos is also automatically activated
+emphasize-lines/emphasize-lines_output
+  Emphasize particular lines of the block
 language/language_output:
   | Will add syntax highlighting for the specified language
   | The default for the code block is python, the default for the output block is plain text
@@ -56,7 +63,7 @@ Generated view
   :hide_output:
   :caption: This is an important caption
 
-  print('Easy!')
+    print('Easy!')
 
 ----
 
@@ -171,3 +178,43 @@ Generated view
 ----
 
 With the combination of ``skip`` and ``hide`` it's possible to "simulate" every code.
+
+
+Further Examples
+------------------------------
+
+This is an example with captions, highlights and name
+
+.. code-block:: python
+
+   .. exec_code::
+      :lineno-start: 5
+      :emphasize-lines: 1, 3
+      :caption: This is an important caption
+      :caption_output: This is an important output caption
+      :name: my_example_1
+
+      print('My')
+      # This is a comment
+
+      print('Output!')
+
+Generated view
+
+----
+
+.. exec_code::
+   :lineno-start: 5
+   :emphasize-lines: 1, 3
+   :caption: This is an important caption
+   :caption_output: This is an important output caption
+   :name: my_example_1
+
+   print('My')
+   # This is a comment
+
+   print('Output!')
+
+----
+
+See :ref:`this code snippet <my_example_1>` for an example.
