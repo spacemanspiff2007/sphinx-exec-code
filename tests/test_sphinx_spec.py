@@ -31,7 +31,7 @@ def test_invalid_options() -> None:
         'Invalid option: hide-output! '
         'Supported: caption, caption_output, class, class_output, dedent, dedent_output, '
         'emphasize-lines, emphasize-lines_output, filename, force, force_output, hide, hide_code, hide_output, '
-        'language, language_output, lineno-start, lineno-start_output, linenos, linenos_output, name'
+        'language, language_output, lineno-start, lineno-start_output, linenos, linenos_output, name, name_output'
     )
 
     with pytest.raises(ValueError) as e:    # noqa: PT011
@@ -41,5 +41,11 @@ def test_invalid_options() -> None:
         'Invalid options: caption-output, hide-output! '
         'Supported: caption, caption_output, class, class_output, dedent, dedent_output, '
         'emphasize-lines, emphasize-lines_output, filename, force, force_output, hide, hide_code, hide_output, '
-        'language, language_output, lineno-start, lineno-start_output, linenos, linenos_output, name'
+        'language, language_output, lineno-start, lineno-start_output, linenos, linenos_output, name, name_output'
     )
+
+
+def test_post_process() -> None:
+    assert SpecOutput.from_options({'name': 'asdf'}).spec == {'name': 'asdf_output'}
+    assert SpecOutput.from_options({'name_output': 'asdf'}).spec == {'name': 'asdf'}
+    assert SpecOutput.from_options({'name': '1', 'name_output': '2'}).spec == {'name': '2'}

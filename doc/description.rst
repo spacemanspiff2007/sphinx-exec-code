@@ -28,8 +28,8 @@ for a detailed description
 
 hide/hide_output:
   Will hide the corresponding block
-name
-  Define implicit target name that can be referenced by using ref. For example:
+name/name_output
+  Define implicit target name that can be referenced by using ref
 caption/caption_output
   Will add a caption above the block
 linenos/linenos_output
@@ -183,16 +183,18 @@ With the combination of ``skip`` and ``hide`` it's possible to "simulate" every 
 Further Examples
 ------------------------------
 
-This is an example with captions, highlights and name
+This is an example with captions, highlights and name.
+
 
 .. code-block:: python
 
    .. exec_code::
       :lineno-start: 5
-      :emphasize-lines: 1, 3
+      :emphasize-lines: 1, 4
       :caption: This is an important caption
       :caption_output: This is an important output caption
       :name: my_example_1
+      :name_output: my_output_1
 
       print('My')
       # This is a comment
@@ -205,10 +207,11 @@ Generated view
 
 .. exec_code::
    :lineno-start: 5
-   :emphasize-lines: 1, 3
+   :emphasize-lines: 1, 4
    :caption: This is an important caption
    :caption_output: This is an important output caption
    :name: my_example_1
+   :name_output: my_output_1
 
    print('My')
    # This is a comment
@@ -217,4 +220,12 @@ Generated view
 
 ----
 
-See :ref:`this code snippet <my_example_1>` for an example.
+Create a link using to the blocks by using the name:
+
+.. code-block:: text
+
+    See :ref:`this code snippet <my_example_1>` for an example
+    See :ref:`this code snippet <my_output_1>` for an example output
+
+See :ref:`this code snippet <my_example_1>` for an example
+See :ref:`this code snippet <my_output_1>` for an example output
