@@ -1,6 +1,5 @@
 import traceback
 from pathlib import Path
-from typing import Any, Final, Tuple
 
 from docutils.statemachine import StringList
 from sphinx.directives.code import CodeBlock
@@ -82,7 +81,7 @@ class ExecCode(SphinxDirective):
             raise ExtensionError(msg, orig_exc=e) from None
 
         # Show the code from the user
-        self.create_literal_block(output, code_show, code_spec, str(file), line)
+        self.create_literal_block(output, code_show, code_spec, line)
 
         try:
             code_results = execute_code(code_exec, file, line)
@@ -98,10 +97,10 @@ class ExecCode(SphinxDirective):
             raise ExtensionError(msg) from None
 
         # Show the output from the code execution
-        self.create_literal_block(output, code_results, output_spec, str(file), line)
+        self.create_literal_block(output, code_results, output_spec, line)
         return output
 
-    def create_literal_block(self, objs: list, code: str, spec: SphinxSpecBase, file: str, line: int) -> None:
+    def create_literal_block(self, objs: list, code: str, spec: SphinxSpecBase, line: int) -> None:
         if spec.hide or not code:
             return None
 
@@ -111,18 +110,9 @@ class ExecCode(SphinxDirective):
             line,
             # I'm not sure what these two do
             self.content_offset, '',
-            # Make the state machine report the proper source file because we support loading from files
-            self.state, DummyStateMachine(file, self.state_machine.reporter)
+            # Let's hope these are just for producing error messages and not for anything else
+            self.state, self.state_machine
         )
 
         objs.extend(c.run())
         return None
-
-
-class DummyStateMachine:
-    def __init__(self, source: str, reporter: Any) -> None:
-        self._source: Final = source
-        self.reporter: Final = reporter
-
-    def get_source_and_line(self, line: int) -> Tuple[str, int]:
-        return self._source, line
