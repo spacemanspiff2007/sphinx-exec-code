@@ -36,6 +36,13 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.14 (2024-11-15)
+- Add support for all options from code block
+- Reworked how blocks and options are processed
+
+#### 0.13 (2024-10-15)
+- Add support for python 3.13
+
 #### 0.12 (2024-01-09)
 - Error when providing invalid options
 

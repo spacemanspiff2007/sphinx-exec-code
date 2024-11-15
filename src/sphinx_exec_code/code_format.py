@@ -1,4 +1,7 @@
-from typing import Iterable, List, Tuple
+from textwrap import dedent
+from typing import List, Tuple
+
+from docutils.statemachine import StringList
 
 
 class VisibilityMarkerError(Exception):
@@ -61,7 +64,7 @@ class CodeMarker:
         return code_lines
 
 
-def get_show_exec_code(code_lines: Iterable[str]) -> Tuple[str, str]:
+def get_show_exec_code(code_lines: StringList) -> Tuple[str, str]:
     shown = CodeMarker('hide')
     executed = CodeMarker('skip')
 
@@ -77,13 +80,7 @@ def get_show_exec_code(code_lines: Iterable[str]) -> Tuple[str, str]:
 
     shown_lines = shown.get_lines()
 
-    # check if the shown code block is indented as a whole -> strip
-    leading_spaces = [len(line) - len(line.lstrip()) for line in shown_lines]
-    if strip_spaces := min(leading_spaces, default=0):
-        for i, line in enumerate(shown_lines):
-            shown_lines[i] = line[strip_spaces:]
-
     shown_code = '\n'.join(shown_lines)
     executed_code = '\n'.join(executed.get_lines())
 
-    return shown_code, executed_code.strip()
+    return dedent(shown_code), dedent(executed_code.strip())

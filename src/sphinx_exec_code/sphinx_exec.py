@@ -1,8 +1,8 @@
 import traceback
 from pathlib import Path
-from typing import List
 
-from docutils import nodes
+from docutils.statemachine import StringList
+from sphinx.directives.code import CodeBlock
 from sphinx.errors import ExtensionError
 from sphinx.util.docutils import SphinxDirective
 
@@ -11,24 +11,6 @@ from sphinx_exec_code.code_exec import CodeExceptionError, execute_code
 from sphinx_exec_code.code_format import VisibilityMarkerError, get_show_exec_code
 from sphinx_exec_code.configuration import EXAMPLE_DIR
 from sphinx_exec_code.sphinx_spec import SphinxSpecBase, build_spec, get_specs
-
-
-def create_literal_block(objs: list, code: str, spec: SphinxSpecBase) -> None:
-    if spec.hide or not code:
-        return None
-
-    # generate header if specified
-    if spec.caption:
-        objs.append(nodes.caption(text=spec.caption))
-
-    # generate code block
-    block = nodes.literal_block(code, code)
-    objs.append(block)
-
-    # set linenos
-    block['linenos'] = spec.linenos
-    block['language'] = spec.language
-    return None
 
 
 class ExecCode(SphinxDirective):
@@ -57,7 +39,7 @@ class ExecCode(SphinxDirective):
             msg = f'Error while running {name}!'
             raise ExtensionError(msg, orig_exc=e) from None
 
-    def _get_code_line(self, line_no: int, content: List[str]) -> int:
+    def _get_code_line(self, line_no: int, content: StringList) -> int:
         """Get the first line number of the code"""
         if not content:
             return line_no
@@ -99,7 +81,7 @@ class ExecCode(SphinxDirective):
             raise ExtensionError(msg, orig_exc=e) from None
 
         # Show the code from the user
-        create_literal_block(output, code_show, spec=code_spec)
+        self.create_literal_block(output, code_show, code_spec, line)
 
         try:
             code_results = execute_code(code_exec, file, line)
@@ -115,5 +97,22 @@ class ExecCode(SphinxDirective):
             raise ExtensionError(msg) from None
 
         # Show the output from the code execution
-        create_literal_block(output, code_results, spec=output_spec)
+        self.create_literal_block(output, code_results, output_spec, line)
         return output
+
+    def create_literal_block(self, objs: list, code: str, spec: SphinxSpecBase, line: int) -> None:
+        if spec.hide or not code:
+            return None
+
+        c = CodeBlock(
+            'code-block', [spec.language], spec.spec,
+            StringList(code.splitlines()),
+            line,
+            # I'm not sure what these two do
+            self.content_offset, '',
+            # Let's hope these are just for producing error messages and not for anything else
+            self.state, self.state_machine
+        )
+
+        objs.extend(c.run())
+        return None

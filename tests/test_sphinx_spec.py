@@ -1,75 +1,51 @@
-from itertools import chain
-from typing import Type
-
 import pytest
-from docutils.parsers.rst import directives
 
-from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec, get_specs
+from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, get_specs
 
 
 def test_aliases_unique() -> None:
-    for key_code in SpecCode.aliases:
-        assert key_code not in SpecOutput.aliases
-    for key_output in SpecOutput.aliases:
-        assert key_output not in SpecCode.aliases
+    names_code = set(SpecCode.create_spec())
+    names_output = set(SpecOutput.create_spec())
 
-
-@pytest.mark.parametrize('cls', [SpecCode, SpecOutput])
-def test_default_in_aliases(cls: Type[SphinxSpecBase]) -> None:
-    names = list(cls.aliases.values())
-    for k in cls.defaults:
-        assert k in names
-
-
-def test_build_spec_code() -> None:
-    spec = build_spec()
-
-    for name in chain(SpecCode.aliases.keys(), SpecOutput.aliases.keys()):
-        assert name in spec
-
-    assert spec == {
-        'hide_code': directives.flag,
-        'linenos': directives.flag,
-        'caption': directives.unchanged,
-        'language': directives.unchanged,
-        'filename': directives.unchanged,
-
-        'hide_output': directives.flag,
-        'linenos_output': directives.flag,
-        'caption_output': directives.unchanged,
-        'language_output': directives.unchanged,
-    }
+    assert not names_code.intersection(names_output)
 
 
 def test_spec_code() -> None:
-    obj = SpecCode.from_options({'linenos': None, 'caption': 'my_header', 'filename': 'filename'})
-    assert obj.caption == 'my_header'
-    assert obj.language == 'python'
-    assert obj.linenos is True
+    obj = SpecCode.from_options({'linenos': True, 'caption': 'my_header', 'filename': 'filename'})
     assert obj.hide is False
     assert obj.filename == 'filename'
+    assert obj.spec == {'caption': 'my_header', 'linenos': True}
 
 
 def test_spec_output() -> None:
-    obj = SpecOutput.from_options({'hide_output': None, 'caption_output': 'my_header_out'})
-    assert obj.caption == 'my_header_out'
-    assert obj.language == 'none'
-    assert obj.linenos is False
+    obj = SpecOutput.from_options({'hide_output': True, 'caption_output': 'my_header_out'})
     assert obj.hide is True
+    assert obj.spec == {'caption': 'my_header_out'}
 
 
 def test_invalid_options() -> None:
     with pytest.raises(ValueError) as e:    # noqa: PT011
         get_specs({'hide-output': None})
 
-    assert str(e.value) == ('Invalid option: hide-output! '
-                            'Supported: caption, caption_output, filename, hide_code, hide_output, '
-                            'language, language_output, linenos, linenos_output')
-
+    assert str(e.value) == (
+        'Invalid option: hide-output! '
+        'Supported: caption, caption_output, class, class_output, dedent, dedent_output, '
+        'emphasize-lines, emphasize-lines_output, filename, force, force_output, hide, hide_code, hide_output, '
+        'language, language_output, lineno-start, lineno-start_output, linenos, linenos_output, name, name_output'
+    )
 
     with pytest.raises(ValueError) as e:    # noqa: PT011
         get_specs({'hide-output': None, 'language_output': 'asdf', 'caption-output': 'test'})
 
-    assert str(e.value) == ('Invalid options: caption-output, hide-output! '
-                            'Supported: caption, caption_output, filename, hide_code, hide_output, '
-                            'language, language_output, linenos, linenos_output')
+    assert str(e.value) == (
+        'Invalid options: caption-output, hide-output! '
+        'Supported: caption, caption_output, class, class_output, dedent, dedent_output, '
+        'emphasize-lines, emphasize-lines_output, filename, force, force_output, hide, hide_code, hide_output, '
+        'language, language_output, lineno-start, lineno-start_output, linenos, linenos_output, name, name_output'
+    )
+
+
+def test_post_process() -> None:
+    assert SpecOutput.from_options({'name': 'asdf'}).spec == {'name': 'asdf_output'}
+    assert SpecOutput.from_options({'name_output': 'asdf'}).spec == {'name': 'asdf'}
+    assert SpecOutput.from_options({'name': '1', 'name_output': '2'}).spec == {'name': '2'}

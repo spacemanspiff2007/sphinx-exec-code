@@ -24,7 +24,7 @@ import sphinx_exec_code
 
 # -- Project information -----------------------------------------------------
 project = 'sphinx-exec-code'
-copyright = '2021, spacemanspiff2007'
+copyright = '2024, spacemanspiff2007'
 author = 'spacemanspiff2007'
 
 # The full version, including alpha/beta/rc tags
