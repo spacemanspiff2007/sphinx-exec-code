@@ -1,10 +1,6 @@
-from itertools import chain
-from typing import Type
-
 import pytest
-from docutils.parsers.rst import directives
 
-from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, SphinxSpecBase, build_spec, get_specs
+from sphinx_exec_code.sphinx_spec import SpecCode, SpecOutput, get_specs
 
 
 def test_aliases_unique() -> None:

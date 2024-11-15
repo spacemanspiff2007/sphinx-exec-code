@@ -1,13 +1,11 @@
 import traceback
 from pathlib import Path
-from tokenize import String
-from typing import List, Final, Tuple, Any
+from typing import Any, Final, Tuple
 
-from docutils import nodes
-from docutils.statemachine import StringList, StateMachine
+from docutils.statemachine import StringList
 from sphinx.directives.code import CodeBlock
 from sphinx.errors import ExtensionError
-from sphinx.util.docutils import SphinxDirective, LoggingReporter
+from sphinx.util.docutils import SphinxDirective
 
 from sphinx_exec_code.__const__ import log
 from sphinx_exec_code.code_exec import CodeExceptionError, execute_code

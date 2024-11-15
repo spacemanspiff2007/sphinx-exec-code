@@ -1,5 +1,5 @@
 from textwrap import dedent
-from typing import Iterable, List, Tuple
+from typing import List, Tuple
 
 from docutils.statemachine import StringList
 
