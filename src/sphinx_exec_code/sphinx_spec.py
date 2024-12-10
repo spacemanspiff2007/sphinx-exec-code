@@ -12,7 +12,7 @@ class SphinxSpecBase:
     defaults: ClassVar[Dict[str, str]]
 
     @staticmethod
-    def alias_to_name(alias: str) -> str:
+    def alias_to_name(alias: str, *, do_log: bool = True) -> str:
         raise NotImplementedError()
 
     @staticmethod
@@ -37,7 +37,7 @@ class SphinxSpecBase:
     def from_options(cls, options: Dict[str, Any]) -> 'SphinxSpecBase':
         spec_names = tuple(cls.create_spec().keys())
 
-        spec = {cls.alias_to_name(n): v for n, v in cls.defaults.items()}
+        spec = {cls.alias_to_name(n, do_log=False): v for n, v in cls.defaults.items()}
         for name in spec_names:
             if name not in options:
                 continue
@@ -98,9 +98,10 @@ class SpecCode(SphinxSpecBase):
     }
 
     @staticmethod
-    def alias_to_name(alias: str) -> str:
+    def alias_to_name(alias: str, *, do_log: bool = True) -> str:
         if alias == 'hide_code':
-            log.info('The "hide_code" directive is deprecated! Use "hide" instead!')
+            if do_log:
+                log.warning('The "hide_code" directive is deprecated! Use "hide" instead!')
             return 'hide'
         return alias
 
@@ -118,8 +119,13 @@ class SpecCode(SphinxSpecBase):
 
 
 class SpecOutput(SphinxSpecBase):
+    defaults: ClassVar = {
+        'hide': False,
+        'language': 'none',
+    }
+
     @staticmethod
-    def alias_to_name(alias: str) -> str:
+    def alias_to_name(alias: str, *, do_log: bool = True) -> str:  # noqa: ARG004
         if alias.endswith('_output'):
             return alias[:-7]
         return alias
@@ -143,8 +149,3 @@ class SpecOutput(SphinxSpecBase):
 
         # if we have a name for input we create a name for output
         spec['name'] = f'{options[name_code]:s}_output'
-
-    defaults: ClassVar = {
-        'hide': False,
-        'language': 'none',
-    }
