@@ -36,6 +36,9 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.15 (2024-12-10)
+- Removed confusing log output
+
 #### 0.14 (2024-11-15)
 - Add support for all options from code block
 - Reworked how blocks and options are processed
