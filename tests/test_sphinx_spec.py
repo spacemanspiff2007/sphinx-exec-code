@@ -28,6 +28,10 @@ def test_spec_output() -> None:
     assert obj.hide is True
     assert obj.spec == {'caption': 'my_header_out'}
 
+    obj = SpecOutput.from_options({'caption_output': 'my_header_out'})
+    assert obj.hide is False
+    assert obj.spec == {'caption': 'my_header_out'}
+
 
 def test_invalid_options() -> None:
     with pytest.raises(ValueError) as e:    # noqa: PT011
