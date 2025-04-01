@@ -24,7 +24,7 @@ class SphinxSpecBase:
         raise NotImplementedError()
 
     def __init__(self, spec: Dict[str, Any]) -> None:
-        self.hide: Final = spec.pop('hide')
+        self.hide: Final = spec.pop('hide', '<IS_FLAG>') is None
         self.language: Final = spec.pop('language')
         self.spec: Final = spec
 
@@ -110,7 +110,7 @@ class SpecCode(SphinxSpecBase):
         return name
 
     @staticmethod
-    def post_process_spec(spec: Dict[str, Any], options :Dict[str, Any]) -> None:
+    def post_process_spec(spec: Dict[str, Any], options: Dict[str, Any]) -> None:
         return None
 
     def __init__(self, **kwargs: Dict[str, Any]) -> None:

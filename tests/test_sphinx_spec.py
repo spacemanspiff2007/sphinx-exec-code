@@ -16,9 +16,15 @@ def test_spec_code() -> None:
     assert obj.filename == 'filename'
     assert obj.spec == {'caption': 'my_header', 'linenos': True}
 
+    obj = SpecCode.from_options({'hide_code': None})
+    assert obj.hide is True
+
+    obj = SpecCode.from_options({'hide': None})
+    assert obj.hide is True
+
 
 def test_spec_output() -> None:
-    obj = SpecOutput.from_options({'hide_output': True, 'caption_output': 'my_header_out'})
+    obj = SpecOutput.from_options({'hide_output': None, 'caption_output': 'my_header_out'})
     assert obj.hide is True
     assert obj.spec == {'caption': 'my_header_out'}
 
