@@ -36,6 +36,9 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.16 (2025-04-01)
+- Fixed an issue where the ``hide`` and ``hide_output`` options were not working correctly
+
 #### 0.15 (2024-12-10)
 - Removed confusing log output
 
