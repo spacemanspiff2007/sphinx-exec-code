@@ -51,7 +51,7 @@ class SphinxConfigFolder(_SphinxConfigPathBase[Path]):
 
 
 class SphinxConfigMultipleFolderStr(_SphinxConfigPathBase[tuple[str, ...]]):
-    SPHINX_TYPE = ()
+    SPHINX_TYPE = (tuple, list)
 
     @override
     def transform_value(self, app: SphinxApp, value: Any) -> tuple[str, ...]:

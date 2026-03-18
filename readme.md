@@ -36,6 +36,9 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.18 (2026-03-18)
+- Fixed warning
+
 #### 0.17 (2026-03-18)
 - Dropped support for Python 3.8
 - Added some type hints and updated dependencies
