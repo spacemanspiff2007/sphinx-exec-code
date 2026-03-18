@@ -34,7 +34,7 @@ def execute_code(code: str, file: Path, first_loc: int) -> str:
         raise CodeExceptionError(code, file, first_loc, run.returncode, run.stderr) from None
 
     # decode output and drop tailing spaces
-    ret_str = (run.stdout if run.stdout is not None else '' + run.stderr if run.stderr is not None else '').rstrip()
+    ret_str = ((run.stdout or '') + (run.stderr or '')).rstrip()
 
     # drop leading empty lines
     ret_lines = list(dropwhile(lambda x: not x.strip(), ret_str.splitlines()))
