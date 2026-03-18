@@ -1,11 +1,17 @@
+from __future__ import annotations
+
 import os
 import subprocess
 import sys
 from itertools import dropwhile
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from sphinx_exec_code.code_exec_error import CodeExceptionError
 from sphinx_exec_code.configuration import PYTHONPATH_FOLDERS, SET_UTF8_ENCODING, WORKING_DIR
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 def execute_code(code: str, file: Path, first_loc: int) -> str:
@@ -21,14 +27,14 @@ def execute_code(code: str, file: Path, first_loc: int) -> str:
         except KeyError:
             env['PYTHONPATH'] = os.pathsep.join(python_folders)
 
-    run = subprocess.run([sys.executable, '-c', code.encode('utf-8')], capture_output=True, text=True,
+    run = subprocess.run([sys.executable, '-c', code.encode('utf-8')], capture_output=True, text=True,  # noqa: S603
                          encoding=encoding, cwd=cwd, env=env, check=False)
 
     if run.returncode != 0:
         raise CodeExceptionError(code, file, first_loc, run.returncode, run.stderr) from None
 
     # decode output and drop tailing spaces
-    ret_str = (run.stdout if run.stdout is not None else '' + run.stderr if run.stderr is not None else '').rstrip()
+    ret_str = ((run.stdout or '') + (run.stderr or '')).rstrip()
 
     # drop leading empty lines
     ret_lines = list(dropwhile(lambda x: not x.strip(), ret_str.splitlines()))

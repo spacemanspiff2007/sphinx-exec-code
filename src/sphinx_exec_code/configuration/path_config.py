@@ -1,20 +1,25 @@
-from pathlib import Path
-from typing import Tuple
+from __future__ import annotations
 
-from sphinx.application import Sphinx as SphinxApp
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Final
+
+from typing_extensions import override
 
 from sphinx_exec_code.__const__ import log
 from sphinx_exec_code.configuration.base import TYPE_VALUE, SphinxConfigValue
+
+
+if TYPE_CHECKING:
+    from sphinx.application import Sphinx as SphinxApp
 
 
 class InvalidPathError(Exception):
     pass
 
 
-class SphinxConfigPath(SphinxConfigValue[TYPE_VALUE]):
-    SPHINX_TYPE = (str, Path)
+class _SphinxConfigPathBase(SphinxConfigValue[TYPE_VALUE]):
 
-    def make_path(self, app: SphinxApp, value) -> Path:
+    def make_path(self, app: SphinxApp, value: Any) -> Path:
         try:
             path = Path(value)
         except Exception:
@@ -33,28 +38,36 @@ class SphinxConfigPath(SphinxConfigValue[TYPE_VALUE]):
         return folder
 
 
-class SphinxConfigFolder(SphinxConfigPath[Path]):
-    def transform_value(self, app: SphinxApp, value) -> Path:
+class SphinxConfigFolder(_SphinxConfigPathBase[Path]):
+    SPHINX_TYPE = (str, Path)
+
+    @override
+    def transform_value(self, app: SphinxApp, value: Any) -> Path:
         return self.make_path(app, value)
 
+    @override
     def validate_value(self, value: Path) -> Path:
         return self.check_folder_exists(value)
 
 
-class SphinxConfigMultipleFolderStr(SphinxConfigPath[Tuple[str, ...]]):
+class SphinxConfigMultipleFolderStr(_SphinxConfigPathBase[tuple[str, ...]]):
     SPHINX_TYPE = ()
 
-    def transform_value(self, app: SphinxApp, value) -> Tuple[Path, ...]:
-        return tuple(self.make_path(app, p) for p in value)
+    @override
+    def transform_value(self, app: SphinxApp, value: Any) -> tuple[str, ...]:
+        return tuple(str(self.make_path(app, p)) for p in value)
 
-    def validate_value(self, value: Tuple[Path, ...]) -> Tuple[str, ...]:
+    @override
+    def validate_value(self, value: Any) -> tuple[str, ...]:
+        _path_value: Final = tuple(Path(v) for v in value)
+
         # check that folders exist
-        for f in value:
+        for f in _path_value:
             self.check_folder_exists(f)
 
         # Search for a python package and print a warning if we find none
         # since this is the only reason to specify additional folders
-        for f in value:
+        for f in _path_value:
             package_found = False
             for _f in f.iterdir():
                 if not _f.is_dir():
@@ -71,4 +84,4 @@ class SphinxConfigMultipleFolderStr(SphinxConfigPath[Tuple[str, ...]]):
             if not package_found:
                 log.warning(f'[exec-code] No Python packages found in {f}')
 
-        return tuple(map(str, value))
+        return value
