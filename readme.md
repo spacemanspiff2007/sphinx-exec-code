@@ -36,6 +36,10 @@ This code will be executed
 ```
 
 # Changelog
+#### 0.17 (2026-03-18)
+- Dropped support for Python 3.8
+- Added some type hints and updated dependencies
+
 #### 0.16 (2025-04-01)
 - Fixed an issue where the ``hide`` and ``hide_output`` options were not working correctly
 
