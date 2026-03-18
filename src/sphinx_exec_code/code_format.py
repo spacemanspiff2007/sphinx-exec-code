@@ -1,7 +1,11 @@
-from textwrap import dedent
-from typing import List, Tuple
+from __future__ import annotations
 
-from docutils.statemachine import StringList
+from textwrap import dedent
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from docutils.statemachine import StringList
 
 
 class VisibilityMarkerError(Exception):
@@ -19,7 +23,7 @@ class CodeMarker:
 
         self.do_add = True
         self.skip_empty = False
-        self.lines: List[str] = []
+        self.lines: list[str] = []
 
     def is_marker(self, line: str) -> bool:
         if line == self.start:
@@ -54,7 +58,7 @@ class CodeMarker:
 
         self.lines.append(line)
 
-    def get_lines(self) -> List[str]:
+    def get_lines(self) -> list[str]:
         # remove leading and tailing empty lines of the code
         code_lines = self.lines
         while code_lines and not code_lines[0].strip():
@@ -64,7 +68,7 @@ class CodeMarker:
         return code_lines
 
 
-def get_show_exec_code(code_lines: StringList) -> Tuple[str, str]:
+def get_show_exec_code(code_lines: StringList | list[str]) -> tuple[str, str]:
     shown = CodeMarker('hide')
     executed = CodeMarker('skip')
 

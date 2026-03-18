@@ -16,9 +16,6 @@ def test_spec_code() -> None:
     assert obj.filename == 'filename'
     assert obj.spec == {'caption': 'my_header', 'linenos': True}
 
-    obj = SpecCode.from_options({'hide_code': None})
-    assert obj.hide is True
-
     obj = SpecCode.from_options({'hide': None})
     assert obj.hide is True
 
@@ -40,7 +37,7 @@ def test_invalid_options() -> None:
     assert str(e.value) == (
         'Invalid option: hide-output! '
         'Supported: caption, caption_output, class, class_output, dedent, dedent_output, '
-        'emphasize-lines, emphasize-lines_output, filename, force, force_output, hide, hide_code, hide_output, '
+        'emphasize-lines, emphasize-lines_output, filename, force, force_output, hide, hide_output, '
         'language, language_output, lineno-start, lineno-start_output, linenos, linenos_output, name, name_output'
     )
 
@@ -50,7 +47,7 @@ def test_invalid_options() -> None:
     assert str(e.value) == (
         'Invalid options: caption-output, hide-output! '
         'Supported: caption, caption_output, class, class_output, dedent, dedent_output, '
-        'emphasize-lines, emphasize-lines_output, filename, force, force_output, hide, hide_code, hide_output, '
+        'emphasize-lines, emphasize-lines_output, filename, force, force_output, hide, hide_output, '
         'language, language_output, lineno-start, lineno-start_output, linenos, linenos_output, name, name_output'
     )
 

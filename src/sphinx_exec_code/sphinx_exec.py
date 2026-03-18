@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import traceback
 from pathlib import Path
+from typing import TYPE_CHECKING, Final
 
 from docutils.statemachine import StringList
 from sphinx.directives.code import CodeBlock
@@ -11,6 +14,10 @@ from sphinx_exec_code.code_exec import CodeExceptionError, execute_code
 from sphinx_exec_code.code_format import VisibilityMarkerError, get_show_exec_code
 from sphinx_exec_code.configuration import EXAMPLE_DIR
 from sphinx_exec_code.sphinx_spec import SphinxSpecBase, build_spec, get_specs
+
+
+if TYPE_CHECKING:
+    from docutils.nodes import Node
 
 
 class ExecCode(SphinxDirective):
@@ -39,7 +46,7 @@ class ExecCode(SphinxDirective):
             msg = f'Error while running {name}!'
             raise ExtensionError(msg, orig_exc=e) from None
 
-    def _get_code_line(self, line_no: int, content: StringList) -> int:
+    def _get_code_line(self, line_no: int, content: StringList | list[str]) -> int:
         """Get the first line number of the code"""
         if not content:
             return line_no
@@ -54,13 +61,13 @@ class ExecCode(SphinxDirective):
 
         return line_no + i
 
-    def _run(self) -> list:
+    def _run(self) -> list[Node]:
         """ Executes python code for an RST document, taking input from content or from a filename
         :return:
         """
-        output = []
+        output: Final[list[Node]] = []
         raw_file, raw_line = self.get_source_info()
-        content = self.content
+        content: StringList | list[str] = self.content
 
         file = Path(raw_file)
         line = self._get_code_line(raw_line, content)
@@ -90,8 +97,8 @@ class ExecCode(SphinxDirective):
             print()
 
             # Log pretty message
-            for line in e.pformat():
-                log.error(line)
+            for _line in e.pformat():
+                log.error(_line)
 
             msg = 'Could not execute code!'
             raise ExtensionError(msg) from None
@@ -100,7 +107,7 @@ class ExecCode(SphinxDirective):
         self.create_literal_block(output, code_results, output_spec, line)
         return output
 
-    def create_literal_block(self, objs: list, code: str, spec: SphinxSpecBase, line: int) -> None:
+    def create_literal_block(self, objs: list[Node], code: str, spec: SphinxSpecBase, line: int) -> None:
         if spec.hide or not code:
             return None
 

@@ -1,7 +1,11 @@
-import re
-from pathlib import Path
-from typing import List
+from __future__ import annotations
 
+import re
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 re_line = re.compile(r'^\s*File "(<string>)", line (\d+), in <module>', re.MULTILINE)
 
@@ -16,14 +20,14 @@ class CodeExceptionError(Exception):
         self.exec_ret = ret
         self.exec_err = stderr
 
-    def _err_line(self, lines: List[str]) -> int:
+    def _err_line(self, lines: list[str]) -> int:
         # Find the last line where the error happened
         err_line = len(lines)
         for m in re_line.finditer(self.exec_err):
             err_line = int(m.group(2))
         return err_line - 1
 
-    def pformat(self) -> List[str]:
+    def pformat(self) -> list[str]:
         filename = self.file.name
         code_lines = self.code.splitlines()
         err_line = self._err_line(code_lines)
@@ -41,7 +45,6 @@ class CodeExceptionError(Exception):
         for tb_line in self.exec_err.splitlines():
             m = re_line.search(tb_line)
             if m:
-                tb_line = tb_line.replace('File "<string>"', f'File "{filename}"')
                 tb_line = tb_line.replace('File "<string>"', f'File "{filename}"')
                 tb_line = tb_line.replace(f', line {m.group(2)}, in <module>',
                                           f', line {int(m.group(2)) + self.first_loc - 1}')

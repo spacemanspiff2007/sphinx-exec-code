@@ -1,15 +1,19 @@
-from typing import Any, ClassVar, Dict, Final, Tuple
+from __future__ import annotations
 
-from docutils.nodes import literal_block
+from typing import TYPE_CHECKING, Any, ClassVar, Final
+
 from docutils.parsers.rst import directives
 from sphinx.directives.code import CodeBlock
-from sphinx.util.typing import OptionSpec
+from typing_extensions import Self, override
 
-from sphinx_exec_code.__const__ import log
+
+if TYPE_CHECKING:
+    from docutils.nodes import literal_block
+    from sphinx.util.typing import OptionSpec
 
 
 class SphinxSpecBase:
-    defaults: ClassVar[Dict[str, str]]
+    defaults: ClassVar[dict[str, str | bool]]
 
     @staticmethod
     def alias_to_name(alias: str, *, do_log: bool = True) -> str:
@@ -20,10 +24,10 @@ class SphinxSpecBase:
         raise NotImplementedError()
 
     @staticmethod
-    def post_process_spec(spec: Dict[str, Any], options: Dict[str, Any]) -> None:
+    def post_process_spec(spec: dict[str, Any], options: dict[str, Any]) -> None:
         raise NotImplementedError()
 
-    def __init__(self, spec: Dict[str, Any]) -> None:
+    def __init__(self, spec: dict[str, Any]) -> None:
         self.hide: Final = spec.pop('hide', '<IS_FLAG>') is None
         self.language: Final = spec.pop('language')
         self.spec: Final = spec
@@ -34,7 +38,7 @@ class SphinxSpecBase:
         return None
 
     @classmethod
-    def from_options(cls, options: Dict[str, Any]) -> 'SphinxSpecBase':
+    def from_options(cls, options: dict[str, Any]) -> Self:
         spec_names = tuple(cls.create_spec().keys())
 
         spec = {cls.alias_to_name(n, do_log=False): v for n, v in cls.defaults.items()}
@@ -75,7 +79,7 @@ def build_spec() -> OptionSpec:
     return spec
 
 
-def get_specs(options: Dict[str, Any]) -> Tuple['SpecCode', 'SpecOutput']:
+def get_specs(options: dict[str, Any]) -> tuple[SpecCode, SpecOutput]:
     supported = set(SpecCode.create_spec()) | set(SpecOutput.create_spec())
     invalid = set(options) - supported
 
@@ -92,28 +96,26 @@ def get_specs(options: Dict[str, Any]) -> Tuple['SpecCode', 'SpecOutput']:
 class SpecCode(SphinxSpecBase):
     defaults: ClassVar = {
         'filename': '',
-        'hide_code': False,    # deprecated 2024 - remove after some time, must come before the new hide flag!
         'hide': False,
         'language': 'python',
     }
 
+    @override
     @staticmethod
     def alias_to_name(alias: str, *, do_log: bool = True) -> str:
-        if alias == 'hide_code':
-            if do_log:
-                log.warning('The "hide_code" directive is deprecated! Use "hide" instead!')
-            return 'hide'
         return alias
 
+    @override
     @staticmethod
     def name_to_alias(name: str) -> str:
         return name
 
+    @override
     @staticmethod
-    def post_process_spec(spec: Dict[str, Any], options: Dict[str, Any]) -> None:
+    def post_process_spec(spec: dict[str, Any], options: dict[str, Any]) -> None:
         return None
 
-    def __init__(self, **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, **kwargs: dict[str, Any]) -> None:
         super().__init__(**kwargs)
         self.filename: Final[str] = self.spec.pop('filename')
 
@@ -124,20 +126,23 @@ class SpecOutput(SphinxSpecBase):
         'language': 'none',
     }
 
+    @override
     @staticmethod
-    def alias_to_name(alias: str, *, do_log: bool = True) -> str:  # noqa: ARG004
+    def alias_to_name(alias: str, *, do_log: bool = True) -> str:
         if alias.endswith('_output'):
             return alias[:-7]
         return alias
 
+    @override
     @staticmethod
     def name_to_alias(name: str) -> str:
         if name.endswith('_output'):
             return name
         return name + '_output'
 
+    @override
     @staticmethod
-    def post_process_spec(spec: Dict[str, Any], options: Dict[str, Any]) -> None:
+    def post_process_spec(spec: dict[str, Any], options: dict[str, Any]) -> None:
         # if we have a name for code but not for output we programmatically build it by appending the _output suffix
         name_output = SpecOutput.name_to_alias('name')
         if name_output in options:
@@ -149,3 +154,4 @@ class SpecOutput(SphinxSpecBase):
 
         # if we have a name for input we create a name for output
         spec['name'] = f'{options[name_code]:s}_output'
+        return None

@@ -57,3 +57,20 @@ def test_code_no_exec() -> None:
     show, run = get_show_exec_code(code.splitlines())
     assert show == 'print(1 / 0)\nprint(2 / 0)'
     assert run == ''
+
+
+def test_code_comment_indent() -> None:
+    code = '''
+# hide: start
+def test():
+# hide: stop
+    # comment
+    print('asdf')
+
+# hide: start
+test()
+# hide: stop
+'''
+    show, run = get_show_exec_code(code.splitlines())
+    assert show == "# comment\nprint('asdf')"
+    assert run == "def test():\n    # comment\n    print('asdf')\n\ntest()"

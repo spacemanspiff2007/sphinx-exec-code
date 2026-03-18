@@ -1,20 +1,25 @@
-from typing import Any, Final, Generic, Optional, Tuple, Type, TypeVar, Union
+from __future__ import annotations
 
-from sphinx.application import Sphinx as SphinxApp
+from typing import TYPE_CHECKING, Any, Final, Generic, TypeVar
+
 from sphinx.errors import ConfigError
 
 from sphinx_exec_code.__const__ import log
+
+
+if TYPE_CHECKING:
+    from sphinx.application import Sphinx as SphinxApp
 
 
 TYPE_VALUE = TypeVar('TYPE_VALUE')
 
 
 class SphinxConfigValue(Generic[TYPE_VALUE]):
-    SPHINX_TYPE: Union[Tuple[Type[Any], ...], Type[Any]]
+    SPHINX_TYPE: tuple[type[Any], ...] | type[Any] | tuple[()]
 
-    def __init__(self, sphinx_name: str, initial_value: Optional[TYPE_VALUE] = None) -> None:
+    def __init__(self, sphinx_name: str, initial_value: TYPE_VALUE | None = None) -> None:
         self.sphinx_name: Final = sphinx_name
-        self._value: Optional[TYPE_VALUE] = initial_value
+        self._value: TYPE_VALUE | None = initial_value
 
     @property
     def value(self) -> TYPE_VALUE:
@@ -26,7 +31,7 @@ class SphinxConfigValue(Generic[TYPE_VALUE]):
     def transform_value(self, app: SphinxApp, value: Any) -> TYPE_VALUE:
         return value
 
-    def validate_value(self, value) -> TYPE_VALUE:
+    def validate_value(self, value: Any) -> TYPE_VALUE:
         return value
 
     def from_app(self, app: SphinxApp) -> TYPE_VALUE:
