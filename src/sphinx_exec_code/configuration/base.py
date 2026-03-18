@@ -15,7 +15,7 @@ TYPE_VALUE = TypeVar('TYPE_VALUE')
 
 
 class SphinxConfigValue(Generic[TYPE_VALUE]):
-    SPHINX_TYPE: tuple[type[Any], ...] | type[Any] | tuple[()]
+    SPHINX_TYPE: tuple[type[Any], ...] | type[Any]
 
     def __init__(self, sphinx_name: str, initial_value: TYPE_VALUE | None = None) -> None:
         self.sphinx_name: Final = sphinx_name
